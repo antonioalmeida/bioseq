@@ -4,6 +4,11 @@ from SequenceType import SequenceType
 class DNASeq(BioSeq):
 
     nucleotides_dic = set(['A', 'T', 'C', 'G'])
+
+    complement = {"A": "T",
+                  "T": "A",
+                  "G": "C",
+                  "C": "G"}
     
     def __init__(self, seq):
         super().__init__(seq, SequenceType.DNA)
@@ -19,3 +24,10 @@ class DNASeq(BioSeq):
             if i in symbols:
                 count += 1
         return count/len(self.seq)
+
+    def reverse_complement(self):
+        res = ''
+        for base in reversed(self.seq):
+            res += DNASeq.complement[base]
+        
+        return res

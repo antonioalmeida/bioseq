@@ -26,6 +26,11 @@ class BioSeq(abc.ABC):
     def gc_content(self):
         """Calculate the frequency of G and C nucleotides (percentage of 'G' and 'C') of the sequence."""
 
+    @abc.abstractmethod
+    def reverse_complement(self):
+        "Calculates the reverse complement of a DNA molecule"
+        return "ERROR: not a valid method for this sequence type."
+
     def __str__(self):
         return self.seq + ' - ' + str(self.seq_type)
 
