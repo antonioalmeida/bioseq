@@ -5,7 +5,7 @@ class BioSeq(abc.ABC):
 
     # Constructor 
     def __init__(self, seq, seq_type):
-        self.seq = seq
+        self.seq = seq.upper()
         self.seq_type = seq_type
 
     @abc.abstractmethod
@@ -21,6 +21,10 @@ class BioSeq(abc.ABC):
             else:
                 dic[i] += 1
         return dic
+
+    @abc.abstractmethod
+    def gc_content(self):
+        """Calculate the frequency of G and C nucleotides (percentage of 'G' and 'C') of the sequence."""
 
     def __str__(self):
         return self.seq + ' - ' + str(self.seq_type)
