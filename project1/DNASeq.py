@@ -1,4 +1,5 @@
 from BioSeq import BioSeq
+from RNASeq import RNASeq
 from SequenceType import SequenceType
 
 class DNASeq(BioSeq):
@@ -32,3 +33,7 @@ class DNASeq(BioSeq):
         
         return res
     
+    def transcription(self):
+        rna_seq = self.seq.replace('T','U')
+        return RNASeq(rna_seq)
+
