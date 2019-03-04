@@ -13,8 +13,8 @@ class DNASeq(BioSeq):
     def __init__(self, seq):
         super().__init__(seq, SequenceType.DNA)
 
-    def is_valid(self):
-        return all(i in DNASeq.nucleotides_dic for i in self.seq)
+    def is_valid(self, seq):
+        return all(i in DNASeq.nucleotides_dic for i in seq)
 
     def gc_content(self):
         symbols = ['G', 'C']
@@ -31,3 +31,4 @@ class DNASeq(BioSeq):
             res += DNASeq.complement[base]
         
         return res
+    

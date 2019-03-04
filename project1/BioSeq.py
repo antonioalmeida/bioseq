@@ -5,11 +5,12 @@ class BioSeq(abc.ABC):
 
     # Constructor 
     def __init__(self, seq, seq_type):
+        assert self.is_valid(seq), 'ERROR: invalid sequence'
         self.seq = seq.upper()
         self.seq_type = seq_type
 
     @abc.abstractmethod
-    def is_valid(self):
+    def is_valid(self, seq):
         """Checks if the sequence is valid, depending on its type."""
 
     def symbol_frequency(self):
