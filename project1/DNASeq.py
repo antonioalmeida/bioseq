@@ -37,3 +37,30 @@ class DNASeq(BioSeq):
         rna_seq = self.seq.replace('T','U')
         return RNASeq(rna_seq)
 
+    def translation(self, init_index=0):
+        res = ''
+
+        for i in range(init_index, len(self.seq) - 2, 3):
+            res += self.__translate_codon(self.seq[i:i+3])
+        return res
+
+    def __translate_codon(self, triplet):
+        assert triplet in DNASeq.__aminoacids_dic, 'Triplet not found in aminoacids dictionary'
+        return DNASeq.__aminoacids_dic[triplet]
+
+    def read_dic_aminoacids(filename):
+        dic = {}
+        fd = open(filename)
+        
+        for line in fd:
+            line = line.strip()
+            triplet = line[1:4]
+            aminoacid = line[7]
+            dic[triplet] = aminoacid
+        
+        return dic
+
+    __aminoacids_dic = read_dic_aminoacids('genetic_code.txt')
+
+
+
