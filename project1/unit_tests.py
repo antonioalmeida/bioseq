@@ -2,6 +2,7 @@ import unittest
 from BioSeq import BioSeq
 from DNASeq import DNASeq
 from RNASeq import RNASeq
+from ProteinSeq import ProteinSeq
 
 class TestDNASeq(unittest.TestCase):
 
@@ -30,8 +31,8 @@ class TestDNASeq(unittest.TestCase):
         self.assertEqual(self.valid_dna.transcription(), expected)
 
     def test_translation(self):
-        expected = RNASeq('AUGAAAUUAUGAAUGAGCCUCAGCUGAAGCAUCGCGCAUCAGACUACGCUCAGACUCAGACUCAGCAUUAUAGUGAAUGUUAAUAAAUAAAAUAA')
-        self.assertEqual(self.valid_dna.transcription(), expected)
+        expected = ProteinSeq('MKL_MSLS_SIAHQTTLRLRLSIIVNVNK_N')
+        self.assertEqual(self.valid_dna.translation(), expected)
 
 if __name__ == '__main__':
     unittest.main()
