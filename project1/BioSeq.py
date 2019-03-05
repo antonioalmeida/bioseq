@@ -32,6 +32,16 @@ class BioSeq(abc.ABC):
         "Calculates the reverse complement of a DNA molecule"
         return "ERROR: not a valid method for this sequence type."
 
+    @abc.abstractmethod
+    def transcription(self):
+        return "ERROR: not a valid method for this sequence type." 
+
+    @abc.abstractmethod
+    def translation(self):
+        return "ERROR: not a valid method for this sequence type." 
+
     def __str__(self):
         return self.seq + ' - ' + str(self.seq_type)
 
+    def __eq__(self, other):
+        return self.seq == other.seq and self.seq_type == other.seq_type
