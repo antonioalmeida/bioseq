@@ -1,5 +1,6 @@
 import abc
 from BioSeq import BioSeq
+from ProteinSeq import ProteinSeq
 from SequenceType import SequenceType
 
 class DRNACommon(BioSeq):
@@ -35,7 +36,7 @@ class DRNACommon(BioSeq):
 
         for i in range(init_index, len(self.seq) - 2, 3):
             res += self.__translate_codon(self.seq[i:i+3])
-        return res
+        return ProteinSeq(res)
     
     def __translate_codon(self, triplet):
         assert triplet in self.aminoacids_dic, 'Triplet not found in aminoacids dictionary'
