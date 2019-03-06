@@ -3,6 +3,7 @@ from BioSeq import BioSeq
 from DNASeq import DNASeq
 from RNASeq import RNASeq
 from ProteinSeq import ProteinSeq
+from ProteinSeq import AminoacidSeq
 
 class TestDNASeq(unittest.TestCase):
 
@@ -31,7 +32,7 @@ class TestDNASeq(unittest.TestCase):
         self.assertEqual(self.valid_dna.transcription(), expected)
 
     def test_translation(self):
-        expected = ProteinSeq('MKL_MSLS_SIAHQTTLRLRLSIIVNVNK_N')
+        expected = AminoacidSeq('MKL_MSLS_SIAHQTTLRLRLSIIVNVNK_N')
         self.assertEqual(self.valid_dna.translation(), expected)
 
     def test_codon_usage(self):
@@ -40,16 +41,19 @@ class TestDNASeq(unittest.TestCase):
 
     def test_reading_frames(self):
         expected = [
-            ProteinSeq('MKL_MSLS_SIAHQTTLRLRLSIIVNVNK_N'),
-            ProteinSeq('_NYE_ASAEASRIRLRSDSDSAL__MLINKI'),
-            ProteinSeq('EIMNEPQLKHRASDYAQTQTQHYSEC__IK_'),
-            ProteinSeq('LFYLLTFTIMLSLSLSVV_CAMLQLRLIHNF'),
-            ProteinSeq('YFIY_HSL_C_V_V_A_SDARCFS_GSFIIS'),
-            ProteinSeq('ILFINIHYNAESESERSLMRDASAEAHS_FH')
+            AminoacidSeq('MKL_MSLS_SIAHQTTLRLRLSIIVNVNK_N'),
+            AminoacidSeq('_NYE_ASAEASRIRLRSDSDSAL__MLINKI'),
+            AminoacidSeq('EIMNEPQLKHRASDYAQTQTQHYSEC__IK_'),
+            AminoacidSeq('LFYLLTFTIMLSLSLSVV_CAMLQLRLIHNF'),
+            AminoacidSeq('YFIY_HSL_C_V_V_A_SDARCFS_GSFIIS'),
+            AminoacidSeq('ILFINIHYNAESESERSLMRDASAEAHS_FH')
         ]
 
         self.assertListEqual(self.valid_dna.reading_frames(), expected)
 
+    def test_all_proteins_rf(self):
+        expected = ['MIEDEMIDMAEIDIAEMD_', 'MIDMAEIDIAEMD_', 'MAEIDIAEMD_', 'MD_']
+        self.assertListEqual(AminoacidSeq('IAEMIEDEMIDMAEIDIAEMD_OMAED').all_proteins_rf(), expected)
 
 
 if __name__ == '__main__':
