@@ -58,6 +58,16 @@ class DRNACommon(BioSeq):
     
         return res
 
+    def all_open_reading_frames(self, min_size=0):
+        rfs = self.reading_frames()
+        possible_proteins = []
+    
+        for rf in rfs:
+            possible_proteins += rf.all_proteins_rf(min_size)
+        
+        sorted_proteins = sorted(possible_proteins, key=len, reverse=True)
+        return sorted_proteins
+
     def __translate_codon(self, triplet):
         assert triplet in self.aminoacids_dic, 'Triplet not found in aminoacids dictionary'
         return self.aminoacids_dic[triplet]

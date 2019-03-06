@@ -9,8 +9,12 @@ class AminoacidSeq(BioSeq):
     def is_valid(self, seq):
         return all(i.isalpha() or i in ['_', '*'] for i in seq)
 
-    def all_proteins_rf(self):
-        """Computes all possible proteins in an aminoacid sequence."""
+    def all_proteins_rf(self, min_size=0):
+        """Computes all possible proteins in an aminoacid sequence. 
+        
+        Returns only the ones with sequence length superior or equal to
+        min_size. Sorted by decreasing sequence length.
+        """
         proteins = []
         index_stack = []
     
@@ -19,9 +23,11 @@ class AminoacidSeq(BioSeq):
                 index_stack.append(i)
             if x == '_':
                 for index in index_stack:
-                    proteins.append(self.seq[index:i+1])
+                    proteins.append(ProteinSeq(self.seq[index:i+1]))
                 index_stack = []
     
+        proteins = [p for p in proteins if len(p) > min_size]
+        proteins = sorted(proteins, key=len, reverse=True)
         return proteins
 
 class ProteinSeq(BioSeq):
