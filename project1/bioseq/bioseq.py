@@ -11,6 +11,7 @@ class SequenceType(Enum):
         return format(self.value)
     
 class BioSeq(abc.ABC):
+    """Abstract class representing a biological sequence."""
 
     def __init__(self, seq, seq_type):
         assert self.is_valid(seq), 'ERROR: invalid sequence'
@@ -22,7 +23,7 @@ class BioSeq(abc.ABC):
         """Checks if the sequence is valid, depending on its type."""
 
     def symbol_frequency(self):
-        """Frequency of Symbols"""
+        """Calculates the symbol frequency of the sequence."""
         dic = {}
         for i in self.seq:
             if(i not in dic):
@@ -30,23 +31,6 @@ class BioSeq(abc.ABC):
             else:
                 dic[i] += 1
         return dic
-
-    # @abc.abstractmethod
-    # def gc_content(self):
-    #     """Calculate the frequency of G and C nucleotides (percentage of 'G' and 'C') of the sequence."""
-
-    # @abc.abstractmethod
-    # def reverse_complement(self):
-    #     "Calculates the reverse complement of a DNA molecule"
-    #     return "ERROR: not a valid method for this sequence type."
-
-    # @abc.abstractmethod
-    # def transcription(self):
-    #     return "ERROR: not a valid method for this sequence type." 
-
-    # @abc.abstractmethod
-    # def translation(self):
-    #     return "ERROR: not a valid method for this sequence type." 
 
     def __str__(self):
         return self.seq + ' - ' + str(self.seq_type)

@@ -1,5 +1,6 @@
 from bioseq.bioseq import BioSeq, SequenceType
 from bioseq.dnracommon import DRNACommon
+import bioseq.dnaseq
 
 class RNASeq(DRNACommon):
 
@@ -18,8 +19,12 @@ class RNASeq(DRNACommon):
     def is_valid(self, seq):
         return all(i in RNASeq.nucleotides_dic for i in seq)
 
-    # TODO: this is wrong
-    def transcription(self):
-        rna_seq = self.seq.replace('T','U')
-        return RNASeq(rna_seq)
+    def reverse_transcription(self):
+        """Computes the correspondent DNA sequence corresponding to the reverse transcription of the RNA sequence.
+        
+        Returns:
+            An instance of DNASeq.
+        """
+        dna_seq = self.seq.replace('U','T')
+        return bioseq.dnaseq.DNASeq(dna_seq)
 

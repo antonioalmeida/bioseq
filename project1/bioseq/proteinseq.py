@@ -10,9 +10,12 @@ class AminoacidSeq(BioSeq):
 
     def all_proteins_rf(self, min_size=0):
         """Computes all possible proteins in an aminoacid sequence. 
+
+        Args:
+            min_size: Minimum length of each protein sequence.
         
-        Returns only the ones with sequence length superior or equal to
-        min_size. Sorted by decreasing sequence length.
+        Returns:
+            A list of instances of ProteinSeq, representing the possible proteins. Sorted by decreasing sequence length.
         """
         proteins = []
         index_stack = []

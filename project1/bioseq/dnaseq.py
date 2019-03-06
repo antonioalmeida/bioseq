@@ -17,5 +17,10 @@ class DNASeq(DRNACommon):
         super().__init__(seq, SequenceType.DNA)
 
     def transcription(self):
+        """Computes the correspondent RNA sequence corresponding to the transcription of the DNA sequence.
+        
+        Returns:
+            An instance of RNASeq.
+        """
         rna_seq = self.seq.replace('T','U')
         return RNASeq(rna_seq)
