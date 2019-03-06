@@ -34,5 +34,23 @@ class TestDNASeq(unittest.TestCase):
         expected = ProteinSeq('MKL_MSLS_SIAHQTTLRLRLSIIVNVNK_N')
         self.assertEqual(self.valid_dna.translation(), expected)
 
+    def test_codon_usage(self):
+        expected = {'GCT': 0, 'GCC': 0, 'GCA': 0, 'GCG': 1}
+        self.assertDictEqual(self.valid_dna.codon_usage('A'), expected)
+
+    def test_reading_frames(self):
+        expected = [
+            ProteinSeq('MKL_MSLS_SIAHQTTLRLRLSIIVNVNK_N'),
+            ProteinSeq('_NYE_ASAEASRIRLRSDSDSAL__MLINKI'),
+            ProteinSeq('EIMNEPQLKHRASDYAQTQTQHYSEC__IK_'),
+            ProteinSeq('LFYLLTFTIMLSLSLSVV_CAMLQLRLIHNF'),
+            ProteinSeq('YFIY_HSL_C_V_V_A_SDARCFS_GSFIIS'),
+            ProteinSeq('ILFINIHYNAESESERSLMRDASAEAHS_FH')
+        ]
+
+        self.assertListEqual(self.valid_dna.reading_frames(), expected)
+
+
+
 if __name__ == '__main__':
     unittest.main()
