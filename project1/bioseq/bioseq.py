@@ -46,6 +46,12 @@ class BioSeq(abc.ABC):
         print("           : the most common symbol is " + most_common)
         print("    First 100 characters: " + self.seq[0:100])
         print("")
+    
+    def save_to_file(self, filename):
+        import pickle
+        with open(filename, 'wb') as output:
+            pickle.dump(self, output, pickle.HIGHEST_PROTOCOL)
+            print('Saved sequence object to ' + filename)
 
     def __str__(self):
         return self.seq + ' - ' + str(self.seq_type)
