@@ -1,7 +1,6 @@
 import abc
-from BioSeq import BioSeq
-from ProteinSeq import AminoacidSeq
-from SequenceType import SequenceType
+from bioseq.bioseq import BioSeq, SequenceType
+from bioseq.proteinseq import AminoacidSeq
 
 class DRNACommon(BioSeq):
 
@@ -89,4 +88,5 @@ class DRNACommon(BioSeq):
             aminoacid = line[7]
             dic[triplet] = aminoacid
 
+        fd.close()
         return dic

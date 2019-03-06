@@ -1,9 +1,17 @@
 import abc
-from SequenceType import SequenceType
+from enum import Enum 
 
+class SequenceType(Enum):
+    DNA = 'DNA'
+    RNA = 'RNA'
+    AMINOACID = 'AMINOACID'
+    PROTEIN = 'PROTEIN'
+    
+    def __str__(self):
+        return format(self.value)
+    
 class BioSeq(abc.ABC):
 
-    # Constructor 
     def __init__(self, seq, seq_type):
         assert self.is_valid(seq), 'ERROR: invalid sequence'
         self.seq = seq.upper()
@@ -45,3 +53,6 @@ class BioSeq(abc.ABC):
 
     def __eq__(self, other):
         return self.seq == other.seq and self.seq_type == other.seq_type
+
+    def __len__(self):
+        return len(self.seq)

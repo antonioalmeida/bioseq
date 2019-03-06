@@ -1,5 +1,4 @@
-from BioSeq import BioSeq
-from SequenceType import SequenceType
+from bioseq.bioseq import BioSeq, SequenceType
 
 class AminoacidSeq(BioSeq):
 

@@ -1,20 +1,16 @@
 import unittest
-from BioSeq import BioSeq
-from DNASeq import DNASeq
-from RNASeq import RNASeq
-from ProteinSeq import ProteinSeq
-from ProteinSeq import AminoacidSeq
+import bioseq as bs
 
 class TestDNASeq(unittest.TestCase):
 
     valid_dna_seq = 'ATGAAATTATGAATGAGCCTCAGCTGAAGCATCGCGCATCAGACTACGCTCAGACTCAGACTCAGCATTATAGTGAATGTTAATAAATAAAATAA'
     invalid_dna_seq = 'abcd'
 
-    valid_dna = DNASeq(valid_dna_seq)
+    valid_dna = bs.DNASeq(valid_dna_seq)
 
     def test_constructor(self):
         # Invalid sequence raises exception
-        self.assertRaises(AssertionError, DNASeq, self.invalid_dna_seq)
+        self.assertRaises(AssertionError, bs.DNASeq, self.invalid_dna_seq)
 
     def test_symbol_frequency(self):
         expected = {'A': 37, 'T': 23, 'G': 17, 'C': 18}
@@ -28,11 +24,11 @@ class TestDNASeq(unittest.TestCase):
         self.assertEqual(self.valid_dna.reverse_complement(), expected)
 
     def test_transcription(self):
-        expected = RNASeq('AUGAAAUUAUGAAUGAGCCUCAGCUGAAGCAUCGCGCAUCAGACUACGCUCAGACUCAGACUCAGCAUUAUAGUGAAUGUUAAUAAAUAAAAUAA')
+        expected = bs.RNASeq('AUGAAAUUAUGAAUGAGCCUCAGCUGAAGCAUCGCGCAUCAGACUACGCUCAGACUCAGACUCAGCAUUAUAGUGAAUGUUAAUAAAUAAAAUAA')
         self.assertEqual(self.valid_dna.transcription(), expected)
 
     def test_translation(self):
-        expected = AminoacidSeq('MKL_MSLS_SIAHQTTLRLRLSIIVNVNK_N')
+        expected = bs.AminoacidSeq('MKL_MSLS_SIAHQTTLRLRLSIIVNVNK_N')
         self.assertEqual(self.valid_dna.translation(), expected)
 
     def test_codon_usage(self):
@@ -41,32 +37,32 @@ class TestDNASeq(unittest.TestCase):
 
     def test_reading_frames(self):
         expected = [
-            AminoacidSeq('MKL_MSLS_SIAHQTTLRLRLSIIVNVNK_N'),
-            AminoacidSeq('_NYE_ASAEASRIRLRSDSDSAL__MLINKI'),
-            AminoacidSeq('EIMNEPQLKHRASDYAQTQTQHYSEC__IK_'),
-            AminoacidSeq('LFYLLTFTIMLSLSLSVV_CAMLQLRLIHNF'),
-            AminoacidSeq('YFIY_HSL_C_V_V_A_SDARCFS_GSFIIS'),
-            AminoacidSeq('ILFINIHYNAESESERSLMRDASAEAHS_FH')
+            bs.AminoacidSeq('MKL_MSLS_SIAHQTTLRLRLSIIVNVNK_N'),
+            bs.AminoacidSeq('_NYE_ASAEASRIRLRSDSDSAL__MLINKI'),
+            bs.AminoacidSeq('EIMNEPQLKHRASDYAQTQTQHYSEC__IK_'),
+            bs.AminoacidSeq('LFYLLTFTIMLSLSLSVV_CAMLQLRLIHNF'),
+            bs.AminoacidSeq('YFIY_HSL_C_V_V_A_SDARCFS_GSFIIS'),
+            bs.AminoacidSeq('ILFINIHYNAESESERSLMRDASAEAHS_FH')
         ]
 
         self.assertListEqual(self.valid_dna.reading_frames(), expected)
 
     def test_all_proteins_rf(self):
         expected = [
-            ProteinSeq('MIEDEMIDMAEIDIAEMD_'),
-            ProteinSeq('MIDMAEIDIAEMD_'),
-            ProteinSeq('MAEIDIAEMD_'),
-            ProteinSeq('MD_'),
+            bs.ProteinSeq('MIEDEMIDMAEIDIAEMD_'),
+            bs.ProteinSeq('MIDMAEIDIAEMD_'),
+            bs.ProteinSeq('MAEIDIAEMD_'),
+            bs.ProteinSeq('MD_'),
         ]
-        self.assertListEqual(AminoacidSeq('IAEMIEDEMIDMAEIDIAEMD_OMAED').all_proteins_rf(), expected)
+        self.assertListEqual(bs.AminoacidSeq('IAEMIEDEMIDMAEIDIAEMD_OMAED').all_proteins_rf(), expected)
 
     def test_all_open_reading_frames(self):
         expected = [
-            ProteinSeq('MNEPQLKHRASDYAQTQTQHYSEC_'),
-            ProteinSeq('MRDASAEAHS_'),
-            ProteinSeq('MLSLSLSVV_'),
-            ProteinSeq('MSLS_'),
-            ProteinSeq('MKL_')
+            bs.ProteinSeq('MNEPQLKHRASDYAQTQTQHYSEC_'),
+            bs.ProteinSeq('MRDASAEAHS_'),
+            bs.ProteinSeq('MLSLSLSVV_'),
+            bs.ProteinSeq('MSLS_'),
+            bs.ProteinSeq('MKL_')
         ]
         self.assertListEqual(self.valid_dna.all_open_reading_frames(), expected)
 

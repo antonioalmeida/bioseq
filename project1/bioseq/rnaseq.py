@@ -1,10 +1,9 @@
-from BioSeq import BioSeq
-from DNRACommon import DRNACommon
-from SequenceType import SequenceType
+from bioseq.bioseq import BioSeq, SequenceType
+from bioseq.dnracommon import DRNACommon
 
 class RNASeq(DRNACommon):
 
-    aminoacids_dic = DRNACommon.read_dic_aminoacids('CODON_AMINOACID_MAP_RNA.txt')
+    aminoacids_dic = DRNACommon.read_dic_aminoacids('bioseq/res/CODON_AMINOACID_MAP_RNA.txt')
 
     nucleotides_dic = set(['A', 'U', 'C', 'G'])
 
