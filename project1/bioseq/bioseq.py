@@ -31,6 +31,21 @@ class BioSeq(abc.ABC):
             else:
                 dic[i] += 1
         return dic
+    
+    def pretty_print(self):
+        """Prints to the console summarized information about the sequence."""
+
+        sf = self.symbol_frequency()
+        most_common = max(sf, key=(lambda x : sf[x]))
+
+        print("")
+        print("Sequence")
+        print("    Type: " + str(self.seq_type))
+        print("    Length: " + str(len(self.seq)) + " characters")
+        print("    Symbols: contains " + str(len(sf)) + " different symbols")
+        print("           : the most common symbol is " + most_common)
+        print("    First 100 characters: " + self.seq[0:100])
+        print("")
 
     def __str__(self):
         return self.seq + ' - ' + str(self.seq_type)
