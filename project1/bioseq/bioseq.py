@@ -1,5 +1,6 @@
 import abc
 from enum import Enum 
+import pickle
 
 class SequenceType(Enum):
     DNA = 'DNA'
@@ -48,10 +49,15 @@ class BioSeq(abc.ABC):
         print("")
     
     def save_to_file(self, filename):
-        import pickle
         with open(filename, 'wb') as output:
             pickle.dump(self, output, pickle.HIGHEST_PROTOCOL)
             print('Saved sequence object to ' + filename)
+
+    @staticmethod
+    def load_from_file(filename):
+        with open(filename, 'rb') as input:
+            print('Loading sequence object from ' + filename + '...')
+            return pickle.load(input)
 
     def __str__(self):
         return self.seq + ' - ' + str(self.seq_type)
