@@ -3,6 +3,7 @@ from BioSeq import BioSeq
 from ProteinSeq import ProteinSeq
 from SequenceType import SequenceType
 
+
 class DRNACommon(BioSeq):
 
     aminoacids_dic = {}
@@ -28,32 +29,57 @@ class DRNACommon(BioSeq):
         res = ''
         for base in reversed(self.seq):
             res += self.complement[base]
-        
+
         return res
 
     def translation(self, init_index=0):
-        res = ''
-
-        for i in range(init_index, len(self.seq) - 2, 3):
-            res += self.__translate_codon(self.seq[i:i+3])
+        res = self.__translation_helper(self.seq, init_index)
         return ProteinSeq(res)
+
+    def codon_usage(self, aminoacid):
+        res_dic = {k:0 for k,v in self.aminoacids_dic.items() if v is aminoacid}
+
+        for i in range(0, len(self.seq) - 2, 3):
+            codon = self.seq[i:i+3]
+            if self.__translate_codon(codon) == aminoacid:
+                res_dic[codon] += 1
+
+        return res_dic
+
+    def reading_frames(self):
+        res = []
+        for i in range(0,3):
+            res.append(self.translation(i))
+        
+        rev_comp = self.reverse_complement()
     
+        for i in range(0,3):
+            rf = self.__translation_helper(rev_comp, i)
+            res.append(ProteinSeq(rf))
+    
+        return res
+
+
+
     def __translate_codon(self, triplet):
         assert triplet in self.aminoacids_dic, 'Triplet not found in aminoacids dictionary'
         return self.aminoacids_dic[triplet]
+
+    def __translation_helper(self, seq, init_index=0):
+        res = ''
+        for i in range(init_index, len(seq) - 2, 3):
+            res += self.__translate_codon(seq[i:i+3])
+        return res
 
     @staticmethod
     def read_dic_aminoacids(filename):
         dic = {}
         fd = open(filename)
-        
+
         for line in fd:
             line = line.strip()
             triplet = line[1:4]
             aminoacid = line[7]
             dic[triplet] = aminoacid
-        
+
         return dic
-
-
-
