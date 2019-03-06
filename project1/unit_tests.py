@@ -52,9 +52,23 @@ class TestDNASeq(unittest.TestCase):
         self.assertListEqual(self.valid_dna.reading_frames(), expected)
 
     def test_all_proteins_rf(self):
-        expected = ['MIEDEMIDMAEIDIAEMD_', 'MIDMAEIDIAEMD_', 'MAEIDIAEMD_', 'MD_']
+        expected = [
+            ProteinSeq('MIEDEMIDMAEIDIAEMD_'),
+            ProteinSeq('MIDMAEIDIAEMD_'),
+            ProteinSeq('MAEIDIAEMD_'),
+            ProteinSeq('MD_'),
+        ]
         self.assertListEqual(AminoacidSeq('IAEMIEDEMIDMAEIDIAEMD_OMAED').all_proteins_rf(), expected)
 
+    def test_all_open_reading_frames(self):
+        expected = [
+            ProteinSeq('MNEPQLKHRASDYAQTQTQHYSEC_'),
+            ProteinSeq('MRDASAEAHS_'),
+            ProteinSeq('MLSLSLSVV_'),
+            ProteinSeq('MSLS_'),
+            ProteinSeq('MKL_')
+        ]
+        self.assertListEqual(self.valid_dna.all_open_reading_frames(), expected)
 
 if __name__ == '__main__':
     unittest.main()
