@@ -1,19 +1,5 @@
 import bioseq
 
-# test = bioseq.DNASeq('AGCT')
-# print(test)
-
-# seq = bioseq.read_fasta_file('examples/dna.txt')
-
-# {v.pretty_print() for k,v in seq.items()}
-
-# seq2 = seq['MNPJ01000022.1 Enterocytozoon hepatopenaei strain TH1 scaffold_00014, whole genome shotgun sequence']
-# #seq2.save_to_file('test.txt')
-
-# seq3 = bioseq.DNASeq.load_from_file('test.txt')
-
-# seq3.pretty_print()
-
 def press_enter():
     print()
     input('Press ENTER to continue...')
