@@ -14,7 +14,6 @@ __types_dic = {
 def read_fasta_file(filename, sequence_type='dna'):
     dic = __create_dictionary(filename)
 
-    # TODO: verify sequence_type input
     Type = __types_dic[sequence_type]
     return {k:Type(v) for k,v in dic.items()} 
 
