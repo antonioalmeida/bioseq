@@ -3,8 +3,8 @@ import re
 
 class AminoacidSeq(BioSeq):
 
-    def __init__(self, seq):
-        super().__init__(seq, SequenceType.AMINOACID)
+    def __init__(self, seq, type=SequenceType.AMINOACID):
+        super().__init__(seq, type)
 
     def is_valid(self, seq):
         return re.match("^[ACDEFGHIKLMNPQRSTVWY_*]+$", seq)
@@ -33,7 +33,7 @@ class AminoacidSeq(BioSeq):
         proteins = sorted(proteins, key=len, reverse=True)
         return proteins
 
-class ProteinSeq(BioSeq):
+class ProteinSeq(AminoacidSeq):
 
     def __init__(self, seq):
         super().__init__(seq, SequenceType.PROTEIN)
