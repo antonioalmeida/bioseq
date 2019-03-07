@@ -7,7 +7,7 @@ class AminoacidSeq(BioSeq):
         super().__init__(seq, type)
 
     def is_valid(self, seq):
-        return re.match("^[ACDEFGHIKLMNPQRSTVWY_*]+$", seq)
+        return all(i.isalpha() or i in ['_', '*'] for i in seq)
 
     def all_proteins_rf(self, min_size=0):
         """Computes all possible proteins in an aminoacid sequence. 
