@@ -1,7 +1,7 @@
 import unittest
 import bioseq as bs
 
-class TestDNASeq(unittest.TestCase):
+class SequenceTests(unittest.TestCase):
 
     valid_dna_seq = 'ATGAAATTATGAATGAGCCTCAGCTGAAGCATCGCGCATCAGACTACGCTCAGACTCAGACTCAGCATTATAGTGAATGTTAATAAATAAAATAA'
     invalid_dna_seq = 'abcd'
@@ -68,3 +68,4 @@ class TestDNASeq(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
