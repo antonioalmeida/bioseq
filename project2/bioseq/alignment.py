@@ -39,7 +39,7 @@ class Alignment():
         
         return (score, trace)
 
-    def recover_align(self, trace, seq1, seq2):
+    def recover_global_align(self, trace, seq1, seq2):
         res = ["",""]
         (i,j) = (len(seq1),len(seq2))
         
@@ -59,11 +59,47 @@ class Alignment():
         
         return [s[::-1] for s in res]
 
+    def global_align_multiple_solutions(self, seq1, seq2, g):
+        m = len(seq1)
+        n = len(seq2)
+        
+        score = [[0]]
+        trace = [[0]]
+        
+        # initialize gaps in rows
+        score[0] = [g * j for j in range(0, n+1)]
+        trace[0] = [3 for _ in range(0, n+1)]
+        
+        
+        # initialize gaps in cols
+        for i in range(1, m+1):
+            score.append([g*i])
+            trace.append([[2]])
+
+        # apply the recurrence to fill the matrices
+        for i in range(1, m+1):
+            for j in range(1, n+1):
+                s1 = score[i-1][j-1] + self.__score_col_alignment(seq1[i-1], seq2[j-1], g)
+                s2 = score[i-1][j] + g
+                s3 = score[i][j-1] + g
+                score[i].append(max(s1,s2,s3))
+                trace[i].append(self.__max_indices(s1,s2,s3))
+        
+        return (score, trace)
+
     def __max3t(self, v1,v2,v3):
         if v1 > v2:
             return 1 if v1 > v3 else 3
         else:
             return 2 if v2 > v3 else 3
+
+    def __max_indices(self, *argv):
+        m = max(argv)
+        res = []
+        for i,v in enumerate(argv):
+            if(v == m):
+                res.append(i+1)
+        return res
 
     # Provides the score of a column alignment, i.e., between characters c1 and c2
     # Assume a constant gap penalty g and a substitution matrix sm
