@@ -1,4 +1,5 @@
 import abc
+import utils
 
 DIAGONAL = 1
 VERTICAL = 2
@@ -8,8 +9,11 @@ class Alignment():
 
     sm = []
 
-    def __init__(self, sm_file='bioseq/res/blosum62.mat'):
-        self.sm = self.__read_substitution_matrix_file(sm_file)
+    def __init__(self, sm=False):
+        if sm:
+            self.sm = sm
+        else:
+            self.sm = Alignment.read_substitution_matrix_file('bioseq/res/blosum62.mat')
 
     def needleman_wunsch(self, seq1, seq2, g):
         m = len(seq1)
@@ -59,7 +63,7 @@ class Alignment():
         
         return [s[::-1] for s in res]
 
-    def global_align_multiple_solutions(self, seq1, seq2, g):
+    def global_align_multiple_solutions(self, seq1, seq2, g, debug=False):
         m = len(seq1)
         n = len(seq2)
         
@@ -68,8 +72,7 @@ class Alignment():
         
         # initialize gaps in rows
         score[0] = [g * j for j in range(0, n+1)]
-        trace[0] = [3 for _ in range(0, n+1)]
-        
+        trace[0] = [[3] for _ in range(0, n+1)]
         
         # initialize gaps in cols
         for i in range(1, m+1):
@@ -85,9 +88,18 @@ class Alignment():
                 score[i].append(max(s1,s2,s3))
                 trace[i].append(self.__max_indices(s1,s2,s3))
         
+        if debug:
+            print()
+            print('> Score')
+            utils.pretty_print_matrix(score)
+
+            print()
+            print('> Trace')
+            utils.pretty_print_matrix(trace)
+        
         return (score, trace)
 
-    def recover_global_align_multiple_solutions(self, seq1, seq2, trace, g):
+    def recover_global_align_multiple_solutions(self, seq1, seq2, trace, g, debug=False):
         final = []
         alignments = [["","", len(seq1), len(seq2)]]
 
@@ -113,7 +125,7 @@ class Alignment():
                         next_i = i-1
                     new_alignment = [next_al_1, next_al_2, next_i, next_j]
                     alignments.append(new_alignment)
-        
+
         return final
 
     def __max3t(self, v1,v2,v3):
@@ -135,7 +147,8 @@ class Alignment():
     def __score_col_alignment(self, c1, c2, g):
         return g if c1 == '-' or c2 == '-' else self.sm[c1+c2]
 
-    def __read_substitution_matrix_file(self, filename):
+    @staticmethod
+    def read_substitution_matrix_file(filename):
         
         with open(filename) as f:
             
