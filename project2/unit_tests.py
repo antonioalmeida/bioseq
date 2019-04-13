@@ -85,14 +85,16 @@ class AlignmentTests(unittest.TestCase):
 
         (s,t) = al.global_align_multiple_solutions('TACT', 'ACTA', -3)
         self.assertListEqual(s, [[0, -3, -6, -9, -12], [-3, 0, -3, -1, -4], [-6, 1, 0, -3, 3], [-9, -2, 10, 7, 4], [-12, -5, 7, 15, 12]])
-        self.assertListEqual(t, [[3, 3, 3, 3, 3], [[2], [1], [3], [1], [3]], [[2], [1], [1], [1, 3], [1]], [[2], [2], [1], [3], [3]], [[2], [2], [2], [1], [3]]])
+        self.assertListEqual(t, [[[3], [3], [3], [3], [3]], [[2], [1], [3], [1], [3]], [[2], [1], [1], [1, 3], [1]], [[2], [2], [1], [3], [3]], [[2], [2], [2], [1], [3]]])
 
     def test_recover_global_align_multiple_solutions(self):
         al = bs.Alignment()
 
-        (s,t) = al.global_align_multiple_solutions('TACT', 'ACTA', -3)
+        (s,t) = al.global_align_multiple_solutions('PHSWG','HGWAG', -3, debug=True)
 
-        print(al.recover_global_align_multiple_solutions('TACT', 'ACTA', t, -3))
+        print(al.recover_global_align_multiple_solutions('PHSWG','HGWAG', t, -3))
+
+
 
 
 if __name__ == '__main__':
