@@ -44,15 +44,15 @@ class Alignment():
         (i,j) = (len(seq1),len(seq2))
         
         while i>0 or j>0:
-            if trace[j][i] is DIAGONAL:
+            if trace[i][j] is DIAGONAL:
                 res[0] += seq1[i-1]
                 res[1] += seq2[j-1]
                 i -= 1; j -= 1
-            elif trace[j][i] is VERTICAL:
+            elif trace[i][j] is HORIZONTAL:
                 res[0] += '_'
                 res[1] += seq2[j-1]
                 j -= 1
-            elif trace[j][i] is HORIZONTAL:
+            elif trace[i][j] is VERTICAL:
                 res[0] += seq1[i-1]
                 res[1] += '_'
                 i -= 1
@@ -86,6 +86,35 @@ class Alignment():
                 trace[i].append(self.__max_indices(s1,s2,s3))
         
         return (score, trace)
+
+    def recover_global_align_multiple_solutions(self, seq1, seq2, trace, g):
+        final = []
+        alignments = [["","", len(seq1), len(seq2)]]
+
+        while alignments:
+            [al_1, al_2, i, j] = alignments.pop()
+            if i == 0 & j == 0:
+                final.append([al_1, al_2])
+            else:
+                for move in trace[i][j]:
+                    next_al_1 = ""; next_al_2 = ""
+                    next_i = i; next_j = j
+                    if move is DIAGONAL:
+                        next_al_1 = seq1[i-1] + al_1
+                        next_al_2 = seq2[j-1] + al_2
+                        next_i = i-1; next_j = j-1
+                    elif move is HORIZONTAL:
+                        next_al_1 = '_' + al_1
+                        next_al_2 = seq2[j-1] + al_2
+                        next_j = j-1
+                    elif move is VERTICAL:
+                        next_al_1 = seq1[i-1] + al_1
+                        next_al_2 = '_' + al_2
+                        next_i = i-1
+                    new_alignment = [next_al_1, next_al_2, next_i, next_j]
+                    alignments.append(new_alignment)
+        
+        return final
 
     def __max3t(self, v1,v2,v3):
         if v1 > v2:
