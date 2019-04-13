@@ -162,3 +162,8 @@ class Alignment():
             
             dic = { x+y:int(matrix[yi][xi]) for xi,x in enumerate(keys) for yi,y in enumerate(keys) }
             return dic
+
+    @staticmethod 
+    def create_substitution_matrix(alphabet, match=1, mismatch=0):
+        dic = { x+y:match if x==y else mismatch for x in alphabet for y in alphabet}
+        return dic
