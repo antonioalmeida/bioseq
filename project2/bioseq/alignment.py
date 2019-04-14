@@ -166,12 +166,13 @@ class Alignment():
         return (score, trace, maxscore) 
 
     def recover_local_align_multiple_solutions(self, S, T, seq1, seq2):
-        """determine the cell with max score"""
-        start_i, start_j = self.max_mat(S)
-        """terminates when finds a cell with zero"""
         final = []
-        alignments = [["","", start_i, start_j]]
+        alignments = [["","", i, j] for (i, j) in self.max_mat(S)]
 
+        print('> Initial Alignments')
+        for line in alignments:
+            print(line)
+        print('<')
         import time
 
         while alignments:
@@ -218,17 +219,8 @@ class Alignment():
         return res
 
     def max_mat(self, mat):
-        """finds the max cell in the matrix"""
-        maxval = mat[0][0]
-        maxrow = 0
-        maxcol = 0
-        for i in range(0,len(mat)):
-            for j in range(0, len(mat[i])):
-                if mat[i][j] > maxval:
-                    maxval = mat[i][j]
-                    maxrow = i
-                    maxcol = j
-        return (maxrow, maxcol)
+        max_value = max([max(line) for line in mat])
+        return [(i,j) for i,line in enumerate(mat) for j,v in enumerate(line) if v is max_value]
 
     # Provides the score of a column alignment, i.e., between characters c1 and c2
     # Assume a constant gap penalty g and a substitution matrix sm
