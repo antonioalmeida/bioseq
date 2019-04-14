@@ -80,12 +80,6 @@ class alignmentTests(unittest.TestCase):
         alignment = bs.alignment(sm)
         self.assertDictEqual(alignment.sm ,{'AA': 3, 'AT': -1, 'AC': -1, 'AG': -1, 'TA': -1, 'TT': 3, 'TC': -1, 'TG': -1, 'CA': -1, 'CT': -1, 'CC': 3, 'CG': -1, 'GA': -1, 'GT': -1, 'GC': -1, 'GG': 3})
 
-    def test_recover_global_align(self):
-        al = bs.alignment()
-        (s,t) = al.needleman_wunsch('TACT', 'ACTA', -3)
-
-        self.assertListEqual(al.recover_global_align(t, 'TACT', 'ACTA'), ['TACT_', '_ACTA'])
-
     def test_global_align_multiple_solutions(self):
         al = bs.alignment()
 
@@ -107,11 +101,11 @@ class alignmentTests(unittest.TestCase):
         (s,t, max_score) = al.local_align_multiple_solutions('ANDDR','AARRD', -8)
         print('> Max Score - %d' % max_score)
 
-        print(al.recover_local_align_multiple_solutions(s,t, 'ANDDR','AARRD'))
+        print(al.recover_local_align_multiple_solutions('ANDDR','AARRD', s, t))
         
 
     # C.1) Das sequências no ficheiro protein_sequence.fas indique um par sequências
-    #com vários alinhamentos ótimos. Use a matriz de substituição BLOSUM62 e um gap
+    # com vários alinhamentos ótimos. Use a matriz de substituição BLOSUM62 e um gap
     # de -3.
     def test_c1(self):
         import itertools
@@ -124,14 +118,13 @@ class alignmentTests(unittest.TestCase):
 
         print('Calculating alignments...')
         for (key1, key2) in pairs:
-            seq1 = fasta_dic[key1].seq
-            seq2 = fasta_dic[key2].seq
-            (_,t) = al.global_align_multiple_solutions(seq1, seq2, -3)
+            seq1 = fasta_dic[key1]
+            seq2 = fasta_dic[key2]
 
-            n_global_alignments = len(al.recover_global_align_multiple_solutions(seq1, seq2, t, -3))
+            n_global_alignments = len(al.run_global_align_multiple_solutions(seq1, seq2, -3))
 
-            (s,t, _) = al.local_align_multiple_solutions(seq1, seq2, -8)
-            n_local_alignments = len(al.recover_local_align_multiple_solutions(s,t, seq1, seq2))
+            (s,t, _) = al.local_align_multiple_solutions(seq1, seq2, -3)
+            n_local_alignments = len(al.recover_local_align_multiple_solutions(seq1, seq2,s,t))
 
             alignments.append([key1, key2, n_global_alignments, n_local_alignments])
 
@@ -140,11 +133,11 @@ class alignmentTests(unittest.TestCase):
 
         print('> Top 5 global combinations on protein_sequences.fas')
         for line in sorted_global[:5]:
-            print('    > %s %s - %d' % (line[0], line[1], line[2]))
+            print('    > %s %s - %d - %d' % (line[0], line[1], line[2], line[3]))
 
         print('> Top 5 local combinations on protein_sequences.fas')
         for line in sorted_local[:5]:
-            print('    > %s %s - %d' % (line[0], line[1], line[3]))
+            print('    > %s %s - %d - %d' % (line[0], line[1], line[2], line[3]))
         
     # C.2) Teste as sequências GATTACA e GCATGCT com match = 1, mismatch = -1 e
     # gap = -1 e indique se contém mais do que um alinhamento ótimo.
@@ -152,15 +145,23 @@ class alignmentTests(unittest.TestCase):
         sm = bs.alignment.create_substitution_matrix('ATCG', 1, -1)
         al = bs.alignment(sm)
 
-        (_,t) = al.global_align_multiple_solutions('GATTACA', 'GCATGCT', -1, debug=True)
-        expected = [['G_ATTACA', 'GCATG_CT'], ['G_ATTACA', 'GCAT_GCT'], ['G_ATTACA', 'GCA_TGCT']]
-        self.assertListEqual(al.recover_global_align_multiple_solutions('GATTACA', 'GCATGCT', t, -1), expected)
+        seq1 = 'GATTACA'
+        seq2 = 'GCATGCT'
 
-        (s,t, max_score) = al.local_align_multiple_solutions('GATTACA','GCATGCT', -8, debug=True)
-        print('> Max Score - %d' % max_score)
-        print(al.recover_local_align_multiple_solutions(s,t, 'GATTACA','GCATGCT'))
-        
+        al.run_global_align_multiple_solutions(seq1, seq2, -1, debug=True)
+        al.run_local_align_multiple_solutions(seq1, seq2, -1, debug=True)
 
+    def test_c4(self):
+        al = bs.alignment()
+
+        seq1 = 'CNNITDVDPCVFCSSPTRNQRLVCVVEEPTNIAAVEKTRGYNGVYHVLHGTLSPLHGVGPEHLRTVNLLARVERGEVDELILATSPTVEGEATANYLADLLRPLRVRLTRIATGVPAGSDIEYVDEVTMTRALEGRREL'
+        seq2 = 'MADVPSMDALVALLRRLPGIGPRSAQRISYELLVRKRDLMPQLAAAFQQAHAVVRFCERCNNLSEAPLCAVCRSEHRDRSILCVVESPADLRAIEDTGVFVGEFFVLMGHLSPLDGIGPEALHIDRLSARLGETDLQEVIFATNPTLEGEATAQFLAGLVPDGVTISRIARGVPVGGELEYVDRSTLGRALHGRRLLDE'
+
+        global_n_expected = 5760
+        self.assertEqual(len(al.run_global_align_multiple_solutions(seq1, seq2, -3)), global_n_expected)
+
+        local_expected = [['CNNITDVDP_CVFCSSPTRNQRLVCVVEEPTNIAAVEKTRG_YNGVYHVLHGTLSPLHGVGPEHLRTVNLL_ARVERGEVD__ELILATSPTVEGEATANYLADLLRPLRVRLTRIATGVPAGSDIEYVDEVTMTRALEGRREL', 'CNNLSEA_PLCAVCRSEHRDRSILCVVESPADLRAIEDT_GVFVGEFFVLMGHLSPLDGIGPEALH_IDRLSARL__GETDLQEVIFATNPTLEGEATAQFLAGLV_PDGVTISRIARGVPVGGELEYVDRSTLGRALHGRRLL'], ['CNNITDVDP_CVFCSSPTRNQRLVCVVEEPTNIAAVEKTRG_YNGVYHVLHGTLSPLHGVGPEHLRTVN_LLARVERGEVD__ELILATSPTVEGEATANYLADLLRPLRVRLTRIATGVPAGSDIEYVDEVTMTRALEGRREL', 'CNNLSEA_PLCAVCRSEHRDRSILCVVESPADLRAIEDT_GVFVGEFFVLMGHLSPLDGIGPEALH_IDRLSARL__GETDLQEVIFATNPTLEGEATAQFLAGLV_PDGVTISRIARGVPVGGELEYVDRSTLGRALHGRRLL'], ['CNNITDVDP_CVFCSSPTRNQRLVCVVEEPTNIAAVEKTRG_YNGVYHVLHGTLSPLHGVGPEHLRTVNLL_ARVERGEVD__ELILATSPTVEGEATANYLADLLRPLRVRLTRIATGVPAGSDIEYVDEVTMTRALEGRREL', 'CNNLSEA_PLCAVCRSEHRDRSILCVVESPADLRAIEDT_GVFVGEFFVLMGHLSPLDGIGPEALH_IDRLSARL__GETDLQEVIFATNPTLEGEATAQFLAGLV_PDGVTISRIARGVPVGGELEYVDRSTLGRALHGRR_L'], ['CNNITDVDP_CVFCSSPTRNQRLVCVVEEPTNIAAVEKTRG_YNGVYHVLHGTLSPLHGVGPEHLRTVN_LLARVERGEVD__ELILATSPTVEGEATANYLADLLRPLRVRLTRIATGVPAGSDIEYVDEVTMTRALEGRREL', 'CNNLSEA_PLCAVCRSEHRDRSILCVVESPADLRAIEDT_GVFVGEFFVLMGHLSPLDGIGPEALH_IDRLSARL__GETDLQEVIFATNPTLEGEATAQFLAGLV_PDGVTISRIARGVPVGGELEYVDRSTLGRALHGRR_L']]
+        self.assertListEqual(al.run_local_align_multiple_solutions(seq1, seq2, -3), local_expected)
 
 if __name__ == '__main__':
     unittest.main()
