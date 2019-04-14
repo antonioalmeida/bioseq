@@ -15,52 +15,52 @@ class Alignment():
         else:
             self.sm = Alignment.read_substitution_matrix_file('bioseq/res/blosum62.mat')
 
-    def needleman_wunsch(self, seq1, seq2, g):
-        m = len(seq1)
-        n = len(seq2)
+    def run_global_align_multiple_solutions(self, seq1, seq2, g, debug=False):
         
-        score = [[0]]
-        trace = [[0]]
-        
-        # initialize gaps in rows
-        score[0] = [g * j for j in range(0, n+1)]
-        trace[0] = [3 for _ in range(0, n+1)]
-        
-        # initialize gaps in cols
-        for i in range(1, m+1):
-            score.append([g*i])
-            trace.append([2])
+        if debug:
+            print('> Global Alignment between:')
+            print('    > %s' % seq1)
+            print('    > %s' % seq2)
+            print()
 
-        # apply the recurrence to fill the matrices
-        for i in range(1, m+1):
-            for j in range(1, n+1):
-                s1 = score[i-1][j-1] + self.__score_col_alignment(seq1[i-1], seq2[j-1], g)
-                s2 = score[i-1][j] + g
-                s3 = score[i][j-1] + g
-                score[i].append(max(s1,s2,s3))
-                trace[i].append(self.__max3t(s1,s2,s3))
+        debug_2 = not (len(seq1) > 15 or len(seq2) > 15)
+        (s,t) = self.global_align_multiple_solutions(seq1, seq2, g, debug_2)
         
-        return (score, trace)
+        alignments = self.recover_global_align_multiple_solutions(seq1, seq2, t, g, debug)
 
-    def recover_global_align(self, trace, seq1, seq2):
-        res = ["",""]
-        (i,j) = (len(seq1),len(seq2))
+        if debug:
+            print('> Got %d alignments' % len(alignments))
+            print('> Some results:')
+            for [al1, al2] in alignments[:4]:
+                print('    > %s' % al1)
+                print('    > %s' % al2)
+                print()
         
-        while i>0 or j>0:
-            if trace[i][j] is DIAGONAL:
-                res[0] += seq1[i-1]
-                res[1] += seq2[j-1]
-                i -= 1; j -= 1
-            elif trace[i][j] is HORIZONTAL:
-                res[0] += '_'
-                res[1] += seq2[j-1]
-                j -= 1
-            elif trace[i][j] is VERTICAL:
-                res[0] += seq1[i-1]
-                res[1] += '_'
-                i -= 1
+        return alignments
+
+    def run_local_align_multiple_solutions(self, seq1, seq2, g, debug=False):
+    
+        if debug:
+            print('> Local Alignment between:')
+            print('    > %s' % seq1)
+            print('    > %s' % seq2)
+            print()
+
+        debug_2 = not (len(seq1) > 15 or len(seq2) > 15)
+        (s,t,max_score) = self.local_align_multiple_solutions(seq1, seq2, g, debug_2)
         
-        return [s[::-1] for s in res]
+        alignments = self.recover_local_align_multiple_solutions(seq1, seq2, s, t, debug)
+
+        if debug:
+            print('> Got %d alignments' % len(alignments))
+            print('> Some results:')
+            for [al1, al2] in alignments[:4]:
+                print('    > %s' % al1)
+                print('    > %s' % al2)
+                print()
+        
+        return alignments
+        
 
     def global_align_multiple_solutions(self, seq1, seq2, g, debug=False):
         m = len(seq1)
@@ -165,15 +165,15 @@ class Alignment():
             utils.pretty_print_matrix(trace)
         return (score, trace, maxscore) 
 
-    def recover_local_align_multiple_solutions(self, S, T, seq1, seq2):
+    def recover_local_align_multiple_solutions(self, seq1, seq2, S, T, debug=False):
         final = []
-        alignments = [["","", i, j] for (i, j) in self.max_mat(S)]
+        max_indices = self.__max_mat(S)
+        alignments = [["","", i, j] for (i, j) in max_indices]
 
-        print('> Initial Alignments')
-        for line in alignments:
-            print(line)
-        print('<')
-        import time
+        if debug:
+            print('> Number of maximum scores - %d' % len(max_indices))
+            for (i,j) in max_indices:
+                print('    > %d, %d' % (i,j))
 
         while alignments:
             [al_1, al_2, i, j] = alignments.pop()
@@ -218,9 +218,9 @@ class Alignment():
                 res.append(i+1)
         return res
 
-    def max_mat(self, mat):
+    def __max_mat(self, mat):
         max_value = max([max(line) for line in mat])
-        return [(i,j) for i,line in enumerate(mat) for j,v in enumerate(line) if v is max_value]
+        return [(i,j) for i,line in enumerate(mat) for j,v in enumerate(line) if v == max_value]
 
     # Provides the score of a column alignment, i.e., between characters c1 and c2
     # Assume a constant gap penalty g and a substitution matrix sm
