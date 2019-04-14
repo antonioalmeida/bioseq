@@ -209,6 +209,11 @@ class Alignment():
         utils.pretty_print_with_header(scores, seqs)
         return scores
 
+    def compare_pairwise_local_align(self, seqs, g):
+        scores = [ [self.__get_local_alignment_max_score(seq1, seq2, g) for seq2 in seqs] for seq1 in seqs ]
+        utils.pretty_print_with_header(scores, seqs)
+        return scores
+
     def __max3t(self, v1,v2,v3):
         if v1 > v2:
             return 1 if v1 > v3 else 3
@@ -235,6 +240,10 @@ class Alignment():
     def __get_global_alignment_max_score(self, seq1, seq2, g):
         (s,_) = self.global_align_multiple_solutions(seq1, seq2, g)
         return s[len(seq1)][len(seq2)]
+
+    def __get_local_alignment_max_score(self, seq1, seq2, g):
+        (_,_,max_score) = self.local_align_multiple_solutions(seq1, seq2, g)
+        return max_score
 
     @staticmethod
     def read_substitution_matrix_file(filename):
