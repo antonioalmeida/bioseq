@@ -130,7 +130,7 @@ class Alignment():
     def local_align_multiple_solutions(self, seq1, seq2, g, debug=False):
         """Local alignment"""
         score = [[0]]
-        trace = [[0]]
+        trace = [[[0]]]
         maxscore = 0
         # first row filled with zero
         for j in range(1, len(seq2)+1):
@@ -164,6 +164,42 @@ class Alignment():
             print('> Trace')
             utils.pretty_print_matrix(trace)
         return (score, trace, maxscore) 
+
+    def recover_local_align_multiple_solutions(self, S, T, seq1, seq2):
+        """determine the cell with max score"""
+        start_i, start_j = self.max_mat(S)
+        """terminates when finds a cell with zero"""
+        final = []
+        alignments = [["","", start_i, start_j]]
+
+        while alignments:
+            [al_1, al_2, i, j] = alignments.pop()
+            if T[i][j] == 0:
+                final.append([al_1, al_2])
+            else: 
+                for move in T[i][j]:
+                    next_al_1 = ""; next_al_2 = ""
+                    next_i = i; next_j = j
+                    if move is 0:
+                        final.append([al_1, al_2])
+                    else:
+                        next_al_1 = ""; next_al_2 = ""
+                        next_i = i; next_j = j
+                        if move is DIAGONAL:
+                            next_al_1 = seq1[i-1] + al_1
+                            next_al_2 = seq2[j-1] + al_2
+                            next_i = i-1; next_j = j-1
+                        elif T[i][j] == HORIZONTAL:
+                            next_al_1 = '_' + al_1
+                            next_al_2 = seq2[j-1] + al_2
+                            next_j = j-1
+                        elif move is VERTICAL:
+                            next_al_1 = seq1[i-1] + al_1
+                            next_al_2 = '_' + al_2
+                            next_i = i-1
+                        new_alignment = [next_al_1, next_al_2, next_i, next_j]
+                        alignments.append(new_alignment)
+        return final 
         
     def __max3t(self, v1,v2,v3):
         if v1 > v2:
@@ -179,6 +215,19 @@ class Alignment():
                 res.append(i+1)
         return res
 
+    def max_mat(self, mat):
+        """finds the max cell in the matrix"""
+        maxval = mat[0][0]
+        maxrow = 0
+        maxcol = 0
+        for i in range(0,len(mat)):
+            for j in range(0, len(mat[i])):
+                if mat[i][j] > maxval:
+                    maxval = mat[i][j]
+                    maxrow = i
+                    maxcol = j
+        return (maxrow, maxcol)
+        
     # Provides the score of a column alignment, i.e., between characters c1 and c2
     # Assume a constant gap penalty g and a substitution matrix sm
     def __score_col_alignment(self, c1, c2, g):
