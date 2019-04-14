@@ -26,7 +26,6 @@ class Alignment():
         score[0] = [g * j for j in range(0, n+1)]
         trace[0] = [3 for _ in range(0, n+1)]
         
-        
         # initialize gaps in cols
         for i in range(1, m+1):
             score.append([g*i])
@@ -128,6 +127,44 @@ class Alignment():
 
         return final
 
+    def local_align_multiple_solutions(self, seq1, seq2, g, debug=False):
+        """Local alignment"""
+        score = [[0]]
+        trace = [[0]]
+        maxscore = 0
+        # first row filled with zero
+        for j in range(1, len(seq2)+1):
+            score[0].append(0)
+            trace[0].append([0])
+        # first column filled with zero
+        for i in range(1, len(seq1)+1):
+            score.append([0])
+            trace.append([[0]])
+        for i in range(0, len(seq1)):
+            for j in range(len(seq2)):
+                s1 = score[i][j] + self.__score_col_alignment(seq1[i], seq2[j], g)
+                s2 = score[i][j+1] + g
+                s3 = score[i+1][j] + g
+                b = max(s1, s2, s3)
+                if b <= 0:
+                    score[i+1].append(0)
+                    trace[i+1].append([0])
+                else:
+                    score[i+1].append(b)
+                    trace[i+1].append(self.__max_indices(s1, s2, s3))
+                    if b > maxscore:
+                        maxscore = b
+
+        if debug:
+            print()
+            print('> Score')
+            utils.pretty_print_matrix(score)
+
+            print()
+            print('> Trace')
+            utils.pretty_print_matrix(trace)
+        return (score, trace, maxscore) 
+        
     def __max3t(self, v1,v2,v3):
         if v1 > v2:
             return 1 if v1 > v3 else 3
@@ -149,9 +186,7 @@ class Alignment():
 
     @staticmethod
     def read_substitution_matrix_file(filename):
-        
         with open(filename) as f:
-            
             chars = f.readline().strip().replace('\t','')
         
             keys = [x for x in chars]
