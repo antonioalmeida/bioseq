@@ -67,3 +67,6 @@ class BioSeq(abc.ABC):
 
     def __len__(self):
         return len(self.seq)
+
+    def __getitem__(self, key):
+        return self.seq.__getitem__(key)
