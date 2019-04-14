@@ -1,6 +1,7 @@
 import abc
 import utils
 
+TERMINATION = 0
 DIAGONAL = 1
 VERTICAL = 2
 HORIZONTAL = 3
@@ -21,7 +22,6 @@ class Alignment():
             print('> Global Alignment between:')
             print('    > %s' % seq1)
             print('    > %s' % seq2)
-            print()
 
         debug_2 = not (len(seq1) > 15 or len(seq2) > 15)
         (s,t) = self.global_align_multiple_solutions(seq1, seq2, g, debug_2)
@@ -29,7 +29,7 @@ class Alignment():
         alignments = self.recover_global_align_multiple_solutions(seq1, seq2, t, g, debug)
 
         if debug:
-            print('> Got %d alignments' % len(alignments))
+            print('> Got %d alignment(s)' % len(alignments))
             print('> Some results:')
             for [al1, al2] in alignments[:4]:
                 print('    > %s' % al1)
@@ -183,7 +183,7 @@ class Alignment():
                 for move in T[i][j]:
                     next_al_1 = ""; next_al_2 = ""
                     next_i = i; next_j = j
-                    if move is 0:
+                    if move is TERMINATION:
                         final.append([al_1, al_2])
                     else:
                         next_al_1 = ""; next_al_2 = ""
@@ -203,7 +203,12 @@ class Alignment():
                         new_alignment = [next_al_1, next_al_2, next_i, next_j]
                         alignments.append(new_alignment)
         return final 
-        
+
+    def compare_pairwise_global_align(self, seqs, g):
+        scores = [ [self.__get_global_alignment_max_score(seq1, seq2, g) for seq2 in seqs] for seq1 in seqs ]
+        utils.pretty_print_with_header(scores, seqs)
+        return scores
+
     def __max3t(self, v1,v2,v3):
         if v1 > v2:
             return 1 if v1 > v3 else 3
@@ -226,6 +231,10 @@ class Alignment():
     # Assume a constant gap penalty g and a substitution matrix sm
     def __score_col_alignment(self, c1, c2, g):
         return g if c1 == '-' or c2 == '-' else self.sm[c1+c2]
+    
+    def __get_global_alignment_max_score(self, seq1, seq2, g):
+        (s,_) = self.global_align_multiple_solutions(seq1, seq2, g)
+        return s[len(seq1)][len(seq2)]
 
     @staticmethod
     def read_substitution_matrix_file(filename):
