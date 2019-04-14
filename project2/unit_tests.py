@@ -101,36 +101,50 @@ class alignmentTests(unittest.TestCase):
         self.assertListEqual(al.recover_global_align_multiple_solutions('PHSWG','HGWAG', t, -3), expected)
 
     def test_local_align_multiple_solutions(self):
-        al = bs.alignment()
+        sm = bs.alignment.create_substitution_matrix('ANDR', 3, -1)
+        al = bs.alignment(sm)
 
-        (s,t, max_score) = al.local_align_multiple_solutions('PHSWG','HGWAG', -8, debug=True)
+        (s,t, max_score) = al.local_align_multiple_solutions('ANDDR','AARRD', -8)
+        print('> Max Score - %d' % max_score)
 
-    #C.1) Das sequências no ficheiro protein_sequence.fas indique um par sequências
-    # com vários alinhamentos ótimos. Use a matriz de substituição BLOSUM62 e um gap
+        print(al.recover_local_align_multiple_solutions(s,t, 'ANDDR','AARRD'))
+        
+
+    # C.1) Das sequências no ficheiro protein_sequence.fas indique um par sequências
+    #com vários alinhamentos ótimos. Use a matriz de substituição BLOSUM62 e um gap
     # de -3.
-    # #def test_c1(self):
-    #     import itertools
+    def test_c1(self):
+        import itertools
 
-    #     al = bs.alignment()
-    #     fasta_dic = bs.read_fasta_file('examples/protein_sequences.fas', 'aminoacid') 
+        al = bs.alignment()
+        fasta_dic = bs.read_fasta_file('examples/protein_sequences.fas', 'aminoacid') 
 
-    #     pairs = list(itertools.combinations(fasta_dic.keys(), 2))
-    #     alignments = []
+        pairs = list(itertools.combinations(fasta_dic.keys(), 2))
+        alignments = []
 
-    #     print('Calculating alignments...')
-    #     for (key1, key2) in pairs:
-    #         seq1 = fasta_dic[key1].seq
-    #         seq2 = fasta_dic[key2].seq
-    #         (_,t) = al.global_align_multiple_solutions(seq1, seq2, -3)
+        print('Calculating alignments...')
+        for (key1, key2) in pairs:
+            seq1 = fasta_dic[key1].seq
+            seq2 = fasta_dic[key2].seq
+            (_,t) = al.global_align_multiple_solutions(seq1, seq2, -3)
 
-    #         n_alignments = len(al.recover_global_align_multiple_solutions(seq1, seq2, t, -3))
-    #         alignments.append([key1, key2, n_alignments])
+            n_global_alignments = len(al.recover_global_align_multiple_solutions(seq1, seq2, t, -3))
 
-    #     sorted_alignments = sorted(alignments, key=lambda x: x[2], reverse=True)
+            (s,t, _) = al.local_align_multiple_solutions(seq1, seq2, -8)
+            n_local_alignments = len(al.recover_local_align_multiple_solutions(s,t, seq1, seq2))
 
-    #     print('> Top 5 combinations on protein_sequences.fas')
-    #     for line in sorted_alignments[:5]:
-    #         print('    > %s %s - %d' % (line[0], line[1], line[2]))
+            alignments.append([key1, key2, n_global_alignments, n_local_alignments])
+
+        sorted_global = sorted(alignments, key=lambda x: x[2], reverse=True)
+        sorted_local = sorted(alignments, key=lambda x: x[3], reverse=True)
+
+        print('> Top 5 global combinations on protein_sequences.fas')
+        for line in sorted_global[:5]:
+            print('    > %s %s - %d' % (line[0], line[1], line[2]))
+
+        print('> Top 5 local combinations on protein_sequences.fas')
+        for line in sorted_local[:5]:
+            print('    > %s %s - %d' % (line[0], line[1], line[3]))
         
     # C.2) Teste as sequências GATTACA e GCATGCT com match = 1, mismatch = -1 e
     # gap = -1 e indique se contém mais do que um alinhamento ótimo.
@@ -138,9 +152,14 @@ class alignmentTests(unittest.TestCase):
         sm = bs.alignment.create_substitution_matrix('ATCG', 1, -1)
         al = bs.alignment(sm)
 
-        (_,t) = al.global_align_multiple_solutions('GATTACA', 'GCATGCT', -1)
+        (_,t) = al.global_align_multiple_solutions('GATTACA', 'GCATGCT', -1, debug=True)
         expected = [['G_ATTACA', 'GCATG_CT'], ['G_ATTACA', 'GCAT_GCT'], ['G_ATTACA', 'GCA_TGCT']]
         self.assertListEqual(al.recover_global_align_multiple_solutions('GATTACA', 'GCATGCT', t, -1), expected)
+
+        (s,t, max_score) = al.local_align_multiple_solutions('GATTACA','GCATGCT', -8, debug=True)
+        print('> Max Score - %d' % max_score)
+        print(al.recover_local_align_multiple_solutions(s,t, 'GATTACA','GCATGCT'))
+        
 
 
 if __name__ == '__main__':
