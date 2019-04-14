@@ -172,6 +172,8 @@ class Alignment():
         final = []
         alignments = [["","", start_i, start_j]]
 
+        import time
+
         while alignments:
             [al_1, al_2, i, j] = alignments.pop()
             if T[i][j] == 0:
@@ -189,7 +191,7 @@ class Alignment():
                             next_al_1 = seq1[i-1] + al_1
                             next_al_2 = seq2[j-1] + al_2
                             next_i = i-1; next_j = j-1
-                        elif T[i][j] == HORIZONTAL:
+                        elif move == HORIZONTAL:
                             next_al_1 = '_' + al_1
                             next_al_2 = seq2[j-1] + al_2
                             next_j = j-1
@@ -227,7 +229,7 @@ class Alignment():
                     maxrow = i
                     maxcol = j
         return (maxrow, maxcol)
-        
+
     # Provides the score of a column alignment, i.e., between characters c1 and c2
     # Assume a constant gap penalty g and a substitution matrix sm
     def __score_col_alignment(self, c1, c2, g):
