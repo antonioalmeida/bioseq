@@ -1,4 +1,3 @@
-import abc
 import utils
 
 GAP = '_'
