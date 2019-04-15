@@ -1,6 +1,7 @@
 import abc
 import utils
 
+GAP = '_'
 TERMINATION = 0
 DIAGONAL = 1
 VERTICAL = 2
@@ -169,10 +170,10 @@ class Alignment():
             l = s1[i-1] + l; r = s2[j-1] + r
             i -= 1; j-= 1
         elif move == HORIZONTAL:
-            l = '_' + l; r = s2[j-1] + r
+            l = GAP + l; r = s2[j-1] + r
             j-= 1
         elif move == VERTICAL:
-            l = s1[i-1] + l; r = '_' + r
+            l = s1[i-1] + l; r = GAP + r
             i-= 1
         return (l,r,i,j)
 
