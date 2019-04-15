@@ -4,14 +4,14 @@
 
 ### Running the demo
 
-```
+```shell
 $ python3 run_me.py
 ```
 
 ### Running the tests
 
-```
-$ python3 unit_tests.py
+```shell
+$ python3 -m unittest test/*.py
 ```
 
 ### Usage
@@ -23,4 +23,4 @@ $ python3 unit_tests.py
 $ import bioseq
 ```
 
-- Use the functions as demonstrated on ```run_me.py``` and ```unit_tests.py```
+- Use the functions as demonstrated on ```run_me.py``` and the test suite
