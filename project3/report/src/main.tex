@@ -56,8 +56,8 @@ For an ilustration of the notion of an alignment, let's consider the short amino
 
 \begin{figure}
     \centering
-    \includegraphics[scale=0.5]{alignment-example.png}
-    \caption{An illustration of multiple sequence alignment on a three dimensional lattice.}
+    \includegraphics[scale=0.7]{alignments.png}
+    \caption{An illustration of the key concepts of the multiple sequence alignment problem on a three dimensional lattice.}
     \label{fig:alignment}
 \end{figure}
 
@@ -67,7 +67,7 @@ To any given set of $N$ sequences $S_1, \dots , S_n$, of length $k_1, \dots , k_
 
 A $path$ $\gamma \big(S_1, \dots , S_n \big)$ between the sequences $S_1, \dots , S_n$ is a connected broken line joining the $original$ $corner$, corresponding to the first character of all sequences, to the $end corner$, corresponding to the last character of all sequences. At each step of this broken line, starting from the original corner, the correspondent point gets closer to the end corner. Paths in an N-dimensional lattice encode alignments of the N sequences that form the lattice. Additionally, each path is associated with a unique alignment.
 
-A path in an N-dimensional lattice, $\gamma \big(S_1, \dots , S_n \big)$, can be projected into any of the planes formed by each pair of sequences $\big(S_i, S_j\big)$. The projected path, $p_ij\big(\gamma\big(S_1, \dots, S_n\big)\big)$, represents an alignment of the sequences $S_i$ and $S_j$.
+A path in an N-dimensional lattice, $\gamma \big(S_1, \dots , S_n \big)$, can be projected into any of the planes formed by each pair of sequences $\big(S_i, S_j\big)$. The projected path, $p_{ij}\big(\gamma\big(S_i, S_j\big)\big)$, represents an alignment of the sequences $S_i$ and $S_j$. An illustration of a projected path can be seen in Fig. \ref{fig:alignment}.
 
 \subsection{Optimal Paths}
 
@@ -85,7 +85,7 @@ Considering any N-dimensional path $\gamma^e$ that will be called \textit{y-esti
 
 Developing on this expression, for each $k,l = 1,\dots, N$, we can define a positive number $U_{kl}$ as an upper bound for the measure of the projection of any N-dimensional optimal path into the plane determined by the sequences $S_k$ and $S_l$. Then, when looking for $\gamma^*$ we need only consider paths $\gamma$ in $L\big(S_1, \dots, S_n\big)$ that satisfy $u_{kl}\big(p_{kl}\big(\gamma\big)\big) \leq U_{kl}$, $u$ being a function of the comparison score between a given pair of sequences. 
 
-Based on this, we can define a set of paths $X$ as the only possible candidates to be an optimal path. To consider only paths in X means to execute the procedure to find $\gamma^*$ only in some subregion $Y$ of $L(S_1,\dots,S_n\big)$. Instead of applying the dynamic programming method to the entire lattice, it suffices to consider just the subregion $Y$. The regions $Y_{ij}$ can be determined using a simple variation of the base dynamic programming method. 
+Based on this, we can define a set of paths $X$ as the only possible candidates to be an optimal path. To consider only paths in X means to execute the procedure to find $\gamma^*$ only in some subregion $Y$ of $L(S_1,\dots,S_n\big)$. Instead of applying the dynamic programming method to the entire lattice, it suffices to consider just the subregion $Y$. The regions $Y_{ij}$ can be determined using a simple variation of the base dynamic programming method. An illustration of a subregion Y can be seen in Fig. \ref{fig:alignment}.
 
 \subsection{Estimated Paths}
 
