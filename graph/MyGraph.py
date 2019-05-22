@@ -69,13 +69,19 @@ class MyGraph:
     ## degrees
 
     def out_degree(self, v):
-        pass
+        if v in self.graph:
+            return len(self.graph[v])
 
-    def in_degree(self, v):
-        pass
+    def in_degree(self, value):
+        count = 0
+        for k,v in self.graph.items():
+            if k is not value:
+               if value in v:
+                   count += 1
+        return count
 
     def degree(self, v):
-        pass
+        return self.out_degree(v) + self.in_degree(v)
 
     def all_degrees(self, deg_type="inout"):
         ''' Computes the degree (of a given type) for all nodes.
@@ -213,9 +219,10 @@ if __name__ == "__main__":
     # print (gr.get_predecessors(2))
     # print (gr.get_adjacents(2))
     #
-    # print (gr.in_degree(2))
-    # print (gr.out_degree(2))
-    # print (gr.degree(2))
+    print('Degrees')
+    print (gr.in_degree(2))
+    print (gr.out_degree(2))
+    print (gr.degree(2))
     #
     #print(gr.all_degrees("inout"))
     #print(gr.all_degrees("in"))
