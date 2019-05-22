@@ -110,11 +110,24 @@ class MyGraph:
 
     def mean_degree(self, deg_type="inout"):
         ''' average degree of all nodes: sum of all degrees divided by number of nodes'''
-        pass
+        d = self.all_degrees(deg_type)
+        n = len(self.graph.keys())
+        return sum(d.values()) / n
 
     def prob_degree(self, deg_type="inout"):
         # count the number of occurrences of each degree in the network and derive its frequencies
-        pass
+        degrees = self.all_degrees(deg_type)
+        probs = {}
+        for _,v in degrees.items():
+            if v in probs:
+                probs[v] += 1
+            else:
+                probs[v] = 1
+
+        n = float(len(self.get_nodes()))
+        for k in probs.keys():
+            probs[k] /= n
+        return probs
 
         ## BFS and DFS searches
 
@@ -224,9 +237,9 @@ if __name__ == "__main__":
     print (gr.out_degree(2))
     print (gr.degree(2))
     #
-    #print(gr.all_degrees("inout"))
-    #print(gr.all_degrees("in"))
-    #print(gr.all_degrees("out"))
+    print(gr.all_degrees("inout"))
+    print(gr.all_degrees("in"))
+    print(gr.all_degrees("out"))
     #
     # gr2 = MyGraph({1:[2,3,4], 2:[5,6],3:[6,8],4:[8],5:[7],6:[],7:[],8:[]})
     # print(gr2.reachable_bfs(1))
@@ -241,8 +254,9 @@ if __name__ == "__main__":
     #
     # print(gr2.reachable_with_dist(1))
 
-    # print(gr.mean_degree())
-    # print(gr.prob_degree())
+    print('Mean degree and prob degree') 
+    print(gr.mean_degree())
+    print(gr.prob_degree())
     # print(gr.mean_distances())
     #print (gr.clustering_coef(1))
     #print (gr.clustering_coef(2))
