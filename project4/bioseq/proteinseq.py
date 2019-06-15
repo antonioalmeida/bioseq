@@ -3,8 +3,8 @@ import re
 
 class AminoacidSeq(BioSeq):
 
-    def __init__(self, seq, type=SequenceType.AMINOACID):
-        super().__init__(seq, type)
+    def __init__(self, seq, type=SequenceType.AMINOACID, desc=''):
+        super().__init__(seq, type, desc)
 
     def is_valid(self, seq):
         return all(i.isalpha() or i in ['_', '*'] for i in seq)
@@ -35,8 +35,8 @@ class AminoacidSeq(BioSeq):
 
 class ProteinSeq(AminoacidSeq):
 
-    def __init__(self, seq):
-        super().__init__(seq, SequenceType.PROTEIN)
+    def __init__(self, seq, desc=''):
+        super().__init__(seq, SequenceType.PROTEIN, desc)
 
     def is_valid(self, seq):
         return all(i.isalpha() or i in ['_', '*'] for i in seq) and seq[0] == 'M' 

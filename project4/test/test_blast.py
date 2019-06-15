@@ -13,7 +13,6 @@ class BlastTests(unittest.TestCase):
     def test_fasta_constructor(self):
         b = bs.blast()
         self.assertEqual(b.w, 3)
-        self.assertEqual(len(b.db_desc), 21)
         self.assertEqual(len(b.db), 21)
 
     def test_1(self):

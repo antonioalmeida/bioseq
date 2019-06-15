@@ -3,7 +3,6 @@ from bioseq.fasta import read_fasta_file
 class Blast:
 
     db = []
-    db_desc = []
     w = 3
     m = []
 
@@ -15,9 +14,7 @@ class Blast:
         self.w = w
 
     def read_db_fasta(self, filename):
-        dic = read_fasta_file(filename, 'protein')
-        self.db = list(dic.values())
-        self.db_desc = list(dic.keys())
+        self.db = read_fasta_file(filename, 'protein', use_dic=False)
 
     def read_db(self, filename):
         """From file with sequences line by line read the sequences to a list"""

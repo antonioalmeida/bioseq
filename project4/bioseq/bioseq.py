@@ -1,6 +1,7 @@
 import abc
 from enum import Enum 
 import pickle
+import re
 
 class SequenceType(Enum):
     DNA = 'DNA'
@@ -14,10 +15,17 @@ class SequenceType(Enum):
 class BioSeq(abc.ABC):
     """Abstract class representing a biological sequence."""
 
-    def __init__(self, seq, seq_type):
+    def __init__(self, seq, seq_type, desc=''):
         assert self.is_valid(seq), 'ERROR: invalid sequence'
         self.seq = seq.upper()
         self.seq_type = seq_type
+        self.desc = desc
+
+        m = re.search(r"\[(.*?)\]", desc)
+        if m:
+            self.species = m.group(0)
+        else:
+            self.species = ''
 
     @abc.abstractmethod
     def is_valid(self, seq):
@@ -42,6 +50,8 @@ class BioSeq(abc.ABC):
         print("")
         print("Sequence")
         print("    Type: " + str(self.seq_type))
+        print("    Description: " + str(self.desc))
+        print("    Species: " + str(self.species))
         print("    Length: " + str(len(self.seq)) + " characters")
         print("    Symbols: contains " + str(len(sf)) + " different symbols")
         print("           : the most common symbol is " + most_common)
