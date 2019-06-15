@@ -1,14 +1,23 @@
-# -*- coding: utf-8 -*-
+from bioseq.fasta import read_fasta_file
 
 class Blast:
 
     db = []
+    db_desc = []
     w = 3
     m = []
 
-    def __init__(self, filename = 'bioseq/res/seqdump.txt', w = 3):
-        self.read_db(filename)
+    def __init__(self, filename = 'bioseq/res/seqdump.txt', w = 3, fasta=True):
+        if fasta:
+            self.read_db_fasta(filename)    
+        else:
+            self.read_db(filename)
         self.w = w
+
+    def read_db_fasta(self, filename):
+        dic = read_fasta_file(filename, 'protein')
+        self.db = list(dic.values())
+        self.db_desc = list(dic.keys())
 
     def read_db(self, filename):
         """From file with sequences line by line read the sequences to a list"""
