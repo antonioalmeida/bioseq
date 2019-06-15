@@ -110,11 +110,13 @@ class Blast:
         seqs = []
 
         for k in range(0,len(self.db)):
-            best = self.hit_best_score(self.db[k], q)
-            if best != ():
-                seqs.append(best + (k,))
+            if self.db[k].species != q.species:
+                best = self.hit_best_score(self.db[k], q)
+                if best != ():
+                    seqs.append(best + (k,))
 
-        return sorted(seqs, key=lambda s: s[3], reverse=True)[:n]
+        scores = sorted(seqs, key=lambda s: s[3], reverse=True)[:n]
+        return [ self.db[i[4]] for i in scores]
 
 
 
