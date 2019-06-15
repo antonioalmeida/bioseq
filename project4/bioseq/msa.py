@@ -1,4 +1,5 @@
 import bioseq.alignment 
+from collections import Counter
 
 class MultipleAlignment():
 
@@ -31,8 +32,10 @@ class MultipleAlignment():
     
     def align_consensus(self):
         [seq1, seq2] = self.seqs[0:2]
-        initial_align = self.alignment.run_global_align_multiple_solutions(seq1, seq2, g=-8, debug=True)
+        initial_align = self.alignment.run_global_align_multiple_solutions(seq1, seq2, g=-1, debug=True)
         print(initial_align)
+        aw = AlignmentWrapper(initial_align[0]).consensus()
+        print(aw)
         
     def ScoreColumn(self, charsCol):
         pass
@@ -71,25 +74,21 @@ class AlignmentWrapper():
             res.append(self.seqs[k][indice])
         return res
     
-    def consensus (self):
-        cons = ""
+    def consensus(self):
+        res = ''
         for i in range(len(self)):
-            cont = {}
-            for k in range(len(self.seqs)):
-                c = self.seqs[k][i]
-                if c in cont:
-                    cont[c] = cont[c] + 1
-                else:
-                    cont[c] = 1
-                maximum = 0
-                cmax = None
-            for ke in cont.keys():
-                if ke != "-" and cont[ke] > maximum:
-                    maximum = cont[ke]
-                    cmax = ke
-            cons = cons + cmax
-        return cons 
+            col = [self.seqs[j][i] for j in range(len(self.seqs))]
 
+            dic = {}
+            for j in col:
+                if j in dic:
+                    dic[j] += 1
+                elif j != '_':
+                    dic[j] = 1
+            c = max(dic, key=dic.get)
+            res += c
+
+        return res
 
 if __name__ == "__main__":   
     s1 = "PHWAS"
