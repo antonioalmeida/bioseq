@@ -6,3 +6,4 @@ from bioseq.proteinseq import AminoacidSeq, ProteinSeq
 from bioseq.fasta import read_fasta_file
 from bioseq.alignment import Alignment as alignment
 from bioseq.pipeline import Pipeline as pipeline
+from bioseq.blast import Blast as blast

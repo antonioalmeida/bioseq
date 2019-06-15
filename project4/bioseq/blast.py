@@ -63,6 +63,7 @@ class Blast:
             k+=1       
         size += bestk
         
+        """<index of align. on query, index of align. on sequence, size of align, score>"""
         return (stq-bestk, sts-bestk, size, self.w+matfw+matbw)
         
     def hitBestScore(self, seq, query):
@@ -75,6 +76,8 @@ class Blast:
             if score > bestScore or (score== bestScore and ext[2] < best[2]):
                 bestScore = score
                 best = ext
+
+        """<index of align. on query, index of align. on sequence, size of align, score>"""
         return best
  
  
@@ -91,21 +94,4 @@ class Blast:
                     res = bestSeq[0], bestSeq[1], bestSeq[2], bestSeq[3], k
         if bestScore < 0: return ()
         else: return res
-
-def test1():
-    mb = Blast("bioseq/res/seqBlast.txt", 11)
-    print(mb.db)
-    query = "gacgcctcgcgctcgcgcgctgaggcaaaaaaaaaaaaaaaaaaaatcggatagctagctgagcgctcgatagcgcgttcgctgcatcgcgtatagcgctgaagctcccggcgagctgtctgtaaatcggatctcatctcgctctatcct"
-    r = mb.bestAlignment(query)
-    print(r)
-
-
-def test2():
-    mb = Blast("bioseq/res/seqBlast.txt", 11)
-    query2 = "cgacgacgacgacgaatgatg"
-    r = mb.bestAlignment(query2)
-    print(r)       
-
-if __name__ == '__main__':
-    test1()
-    test2()
+        """<index of align. on query, index of align. on sequence, size of align, score, ???>"""
