@@ -13,13 +13,13 @@ class BlastTests(unittest.TestCase):
     def test_1(self):
         b = bs.blast('bioseq/res/seqBlast.txt', 11)
         q = "gacgcctcgcgctcgcgcgctgaggcaaaaaaaaaaaaaaaaaaaatcggatagctagctgagcgctcgatagcgcgttcgctgcatcgcgtatagcgctgaagctcccggcgagctgtctgtaaatcggatctcatctcgctctatcct"
-        r = b.bestAlignment(q)
+        r = b.best_alignment(q)
         self.assertEqual(r, (1, 38, 149, 108, 3))
         
     def test_2(self):
         b = bs.blast('bioseq/res/seqBlast.txt', 11)
         q = "cgacgacgacgacgaatgatg"
-        r = b.bestAlignment(q)
+        r = b.best_alignment(q)
         self.assertEqual(r, (0, 0, 21, 21, 4))
         
 

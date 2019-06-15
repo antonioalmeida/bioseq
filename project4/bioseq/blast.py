@@ -16,11 +16,11 @@ class Blast:
             self.db = [line.strip() for line in fd]
         pass
 
-    def addSequenceDB(self, seq):
+    def db_add_sequence(self, seq):
         """Add an extra sequence to DB"""
         self.db.append(seq)
         
-    def buildMap (self, query):
+    def build_map(self, query):
         res = {}
         for i in range(len(query)-self.w+1):
             subseq = query[i:i+self.w]
@@ -31,7 +31,7 @@ class Blast:
         
         self.m = res
 
-    def getHits(self, seq, query):
+    def get_hits(self, seq, query):
         res = [] # list of tuples
         for i in range(len(seq)-self.w+1):
             subseq = seq[i:i+self.w]
@@ -41,7 +41,7 @@ class Blast:
                     res.append( (ind,i) )
         return res 
 
-    def extendsHit (self, seq, hit, query):
+    def extend_hit(self, seq, hit, query):
         stq, sts = hit[0], hit[1]
         matfw = 0       
         k=0
@@ -66,12 +66,12 @@ class Blast:
         """<index of align. on query, index of align. on sequence, size of align, score>"""
         return (stq-bestk, sts-bestk, size, self.w+matfw+matbw)
         
-    def hitBestScore(self, seq, query):
-        hits = self.getHits(seq, query)
+    def hit_best_score(self, seq, query):
+        hits = self.get_hits(seq, query)
         bestScore = -1.0
         best = ()
         for h in hits:
-            ext = self.extendsHit(seq, h, query)
+            ext = self.extend_hit(seq, h, query)
             score = ext[3]
             if score > bestScore or (score== bestScore and ext[2] < best[2]):
                 bestScore = score
@@ -81,12 +81,12 @@ class Blast:
         return best
  
  
-    def bestAlignment (self, query):
-        self.buildMap(query)
+    def best_alignment(self, query):
+        self.build_map(query)
         bestScore = -1.0
         res = (0,0,0,0,0)
         for k in range(0,len(self.db)):
-            bestSeq = self.hitBestScore(self.db[k], query)
+            bestSeq = self.hit_best_score(self.db[k], query)
             if bestSeq != ():
                 score = bestSeq[3]  
                 if score > bestScore or (score== bestScore and bestSeq[2] < res[2]):
