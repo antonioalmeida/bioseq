@@ -90,17 +90,6 @@ class Blast:
         self.build_map(q)
         return self.best_alignment_helper(q)
     
-    def best_n_alignments(self, q, n=10):
-        self.build_map(q)
-        restrictions = []
-        res = []
-
-        while len(res) < n:
-            (_, _, _, _, k) = r = self.best_alignment_helper(q, restrictions)
-            res.append(r)
-            restrictions.append(k)
-        return res
-
     def best_alignment_helper(self, query, restrictions=[]):
         bestScore = -1.0
         res = (0,0,0,0,0)
@@ -115,6 +104,17 @@ class Blast:
         if bestScore < 0: return ()
         else: return res
         """<index of align. on query, index of align. on sequence, size of align, score, ???>"""
+
+    def best_n_alignments(self, q, n=10):
+        self.build_map(q)
+        seqs = []
+
+        for k in range(0,len(self.db)):
+            best = self.hit_best_score(self.db[k], q)
+            if best != ():
+                seqs.append(best + (k,))
+
+        return sorted(seqs, key=lambda s: s[3], reverse=True)[:n]
 
 
 
