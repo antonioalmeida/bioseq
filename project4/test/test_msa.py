@@ -8,4 +8,5 @@ class MultipleAlignmentTests(unittest.TestCase):
         s2 = "HWASW"
         s3 = "HPHWA"
         msa = bs.msa([s1, s2, s3])
-        msa.align_consensus()
+        t = msa.align_consensus()
+        print(t.seqs)

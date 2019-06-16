@@ -7,11 +7,36 @@ class MultipleAlignment():
         self.seqs = seqs # list of BioSeq objects
         self.alignment = alignment # an Alignment instance
     
-    def num_seqs(self):
+    def n_seqs(self):
         return len(self.seqs)
     
-    def add_seq_alignment (self, alignment, seq):
-        pass
+    def add_seq(self, al, seq):
+        res = []
+        for i in range(len(al.seqs)+1): res.append('')
+        cons = al.consensus().seqs[0]
+        print('CONSENSUS')
+        print(cons)
+
+        new_al = self.alignment.run_global_align_multiple_solutions(cons, seq, g=-1, debug=True)[0]
+        print('NEW AL')
+        print(new_al)
+        new_al = AlignmentWrapper(new_al)
+
+        orig = 0
+        for i in range(len(new_al)):
+            print('i - ' + str(i))
+            if new_al[0,i] == '_':
+                for k in range(len(al.seqs)):
+                    res[k] += "-"
+            else:
+                for k in range(len(al.seqs)):
+                    print('k - ' + str(k))
+                    res[k] += al[k, orig]
+                orig += 1
+        res[len(al.seqs)] = new_al.seqs[1]
+
+        return(AlignmentWrapper(res))
+
         # res = []
         # for i in range(len(alignment.seqs)+1):
         #     res.append("")
@@ -32,10 +57,14 @@ class MultipleAlignment():
     
     def align_consensus(self):
         [seq1, seq2] = self.seqs[0:2]
-        initial_align = self.alignment.run_global_align_multiple_solutions(seq1, seq2, g=-1, debug=True)
-        print(initial_align)
-        aw = AlignmentWrapper(initial_align[0]).consensus()
-        print(aw)
+        al = self.alignment.run_global_align_multiple_solutions(seq1, seq2, g=-1, debug=True)[0]
+        al = AlignmentWrapper(al)
+
+        res = al
+        for i in range(2, self.n_seqs()):
+            res = self.add_seq(res, self.seqs[i])
+
+        return res
         
     def ScoreColumn(self, charsCol):
         pass
@@ -88,7 +117,7 @@ class AlignmentWrapper():
             c = max(dic, key=dic.get)
             res += c
 
-        return res
+        return AlignmentWrapper([res])
 
 if __name__ == "__main__":   
     s1 = "PHWAS"
