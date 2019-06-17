@@ -1,7 +1,7 @@
 import unittest
 import bioseq as bs
 
-class MultipleAlignmentTests(unittest.TestCase):
+class MSATests(unittest.TestCase):
     sm = bs.alignment.create_substitution_matrix('ATCG', 1, -1)
     msa = bs.msa(["ATAGC", "AACC", "ATGAC"], sm, g=-1) 
 

@@ -1,20 +1,24 @@
 import bioseq.alignment as alignment
+from bioseq.proteinseq import ProteinSeq
 from collections import Counter
 from itertools import combinations
 
 class MultipleAlignment():
 
-    def __init__(self, seqs, sm=False, g=-1):
+    def __init__(self, seqs, sm=False, g=-1, species=False):
         self.seqs = seqs # list of BioSeq objects
         self.alignment = alignment(sm) # an Alignment instance
         self.g = g
+        self.species = []
+
+        if species:
+            self.species = [s.species for s in self.seqs]
     
     def n_seqs(self):
         return len(self.seqs)
     
     def add_seq(self, al, seq):
         cons = al.consensus()
-
         new_al = self.alignment.run_global_align_multiple_solutions(cons, seq, g=self.g)[0]
         new_al = AlignmentWrapper(new_al)
 
@@ -30,7 +34,15 @@ class MultipleAlignment():
         for i in range(2, self.n_seqs()):
             res = self.add_seq(res, self.seqs[i])
 
-        return (res.consensus(), res)
+        final = []
+        if self.species:
+            for i,seq in enumerate(res):
+                final.append(ProteinSeq(seq, self.species[i]))
+            final = AlignmentWrapper(final)
+        else:
+            final = res
+                
+        return (final.consensus(), final)
         
     def score_column(self, col):
         score = 0
@@ -122,3 +134,14 @@ class AlignmentWrapper():
             res += c
 
         return res
+
+    def pretty_print(self, score):
+        print('> MSA')
+
+        for seq in self.seqs:
+            print('> ' + seq.seq + ' - ' + seq.species)
+
+        print('    > Consensus')
+        print('    > ' + self.consensus())
+        print('    > Score')
+        print('    > ' + str(score))

@@ -19,7 +19,13 @@ class Pipeline():
         return r
 
     def run_msa(self, seqs, sm=False, g=-3):
-        return bioseq.msa(seqs, sm, g)
+        msa = bioseq.msa(seqs, sm, g, species=True)
+        (consensus, alignment) = msa.align()
+
+        score = msa.score_sp(alignment)
+        alignment.pretty_print(score)
+        return alignment
+
 
 
 
