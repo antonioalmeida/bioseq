@@ -1,11 +1,12 @@
-import bioseq.alignment 
+import bioseq.alignment as alignment
 from collections import Counter
 
 class MultipleAlignment():
 
-    def __init__(self, seqs, alignment=bioseq.alignment()):
+    def __init__(self, seqs, sm=False, g=-1):
         self.seqs = seqs # list of BioSeq objects
-        self.alignment = alignment # an Alignment instance
+        self.alignment = alignment(sm) # an Alignment instance
+        self.g = g
     
     def n_seqs(self):
         return len(self.seqs)
@@ -13,11 +14,11 @@ class MultipleAlignment():
     def add_seq(self, al, seq):
         res = []
         for i in range(len(al.seqs)+1): res.append('')
-        cons = al.consensus().seqs[0]
+        cons = al.consensus()
         print('CONSENSUS')
         print(cons)
 
-        new_al = self.alignment.run_global_align_multiple_solutions(cons, seq, g=-1, debug=True)[0]
+        new_al = self.alignment.run_global_align_multiple_solutions(cons, seq, g=self.g, debug=True)[0]
         print('NEW AL')
         print(new_al)
         new_al = AlignmentWrapper(new_al)
@@ -27,7 +28,7 @@ class MultipleAlignment():
             print('i - ' + str(i))
             if new_al[0,i] == '_':
                 for k in range(len(al.seqs)):
-                    res[k] += "-"
+                    res[k] += "_"
             else:
                 for k in range(len(al.seqs)):
                     print('k - ' + str(k))
@@ -37,27 +38,10 @@ class MultipleAlignment():
 
         return(AlignmentWrapper(res))
 
-        # res = []
-        # for i in range(len(alignment.seqs)+1):
-        #     res.append("")
-        # # create consensus from give alignments
-        # cons = BioSeq(alignment.consensus(), alignment.seq_type)
-
-        # for i in range(len(align2)):
-        #     if align2[0,i]== '-':
-        #         for k in range(len(alignment.seqs)):
-        #             res[k] += "-"
-        #     else:
-        #         for k in range(len(alignment.seqs)):
-        #             res[k] += alignment[k,orig]
-        #         orig+=1
-        # res[len(alignment.seqs)] = align2.seqs[1]
-
-        # return AlignmentWrapper(res, alignment.seq_type) 
-    
     def align_consensus(self):
         [seq1, seq2] = self.seqs[0:2]
-        al = self.alignment.run_global_align_multiple_solutions(seq1, seq2, g=-1, debug=True)[0]
+        al = self.alignment.run_global_align_multiple_solutions(seq1, seq2, g=self.g, debug=True)[0]
+
         al = AlignmentWrapper(al)
 
         res = al
@@ -114,14 +98,9 @@ class AlignmentWrapper():
                     dic[j] += 1
                 elif j != '_':
                     dic[j] = 1
-            c = max(dic, key=dic.get)
+            
+            max_value = max(dic)
+            c = min(dic.keys(), key=lambda x: x == max_value)
             res += c
 
-        return AlignmentWrapper([res])
-
-if __name__ == "__main__":   
-    s1 = "PHWAS"
-    s2 = "HWASW"
-    s3 = "HPHWA"
-    msa = MultipleAlignment([s1, s2, s3])
-    msa.align_consensus()
+        return res
