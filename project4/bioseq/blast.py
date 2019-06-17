@@ -108,12 +108,14 @@ class Blast:
     def best_n_alignments(self, q, n=10):
         self.build_map(q)
         seqs = []
+        species = []
 
         for k in range(0,len(self.db)):
-            if self.db[k].species != q.species:
+            if self.db[k].species != q.species and self.db[k].species not in species:
                 best = self.hit_best_score(self.db[k], q)
                 if best != ():
                     seqs.append(best + (k,))
+                    species.append(self.db[k].species)
 
         scores = sorted(seqs, key=lambda s: s[3], reverse=True)[:n]
         return [ self.db[i[4]] for i in scores]

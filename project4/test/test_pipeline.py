@@ -18,6 +18,7 @@ class PipelineTests(unittest.TestCase):
 
     def test_run_msa(self):
         p = bs.pipeline('bioseq/res/source.fasta')
+        sm = bs.alignment.create_substitution_matrix('ABCDEFGHIJKLMNOPQRSTUVWXYZ', 1, -1)
         b = p.run_blast()
-        p.run_msa(b)
+        p.run_msa(b, sm)
 
