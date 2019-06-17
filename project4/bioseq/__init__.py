@@ -8,3 +8,4 @@ from bioseq.alignment import Alignment as alignment
 from bioseq.pipeline import Pipeline as pipeline
 from bioseq.blast import Blast as blast
 from bioseq.msa import MultipleAlignment as msa
+from bioseq.upgma import UPGMA as upgma
