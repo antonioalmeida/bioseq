@@ -1,5 +1,6 @@
 from bioseq.fasta import read_fasta_file
 import bioseq.blast
+import bioseq.msa
 
 class Pipeline():
 
@@ -16,3 +17,9 @@ class Pipeline():
         b = bioseq.blast(self.db_filename, self.w)
         r = b.best_n_alignments(self.seq)
         return r
+
+    def run_msa(self, seqs, sm=False, g=-3):
+        return bioseq.msa(seqs, sm, g)
+
+
+

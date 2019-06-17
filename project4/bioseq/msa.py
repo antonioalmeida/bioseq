@@ -1,5 +1,6 @@
 import bioseq.alignment as alignment
 from collections import Counter
+from itertools import combinations
 
 class MultipleAlignment():
 
@@ -12,35 +13,16 @@ class MultipleAlignment():
         return len(self.seqs)
     
     def add_seq(self, al, seq):
-        res = []
-        for i in range(len(al.seqs)+1): res.append('')
         cons = al.consensus()
-        print('CONSENSUS')
-        print(cons)
 
-        new_al = self.alignment.run_global_align_multiple_solutions(cons, seq, g=self.g, debug=True)[0]
-        print('NEW AL')
-        print(new_al)
+        new_al = self.alignment.run_global_align_multiple_solutions(cons, seq, g=self.g)[0]
         new_al = AlignmentWrapper(new_al)
 
-        orig = 0
-        for i in range(len(new_al)):
-            print('i - ' + str(i))
-            if new_al[0,i] == '_':
-                for k in range(len(al.seqs)):
-                    res[k] += "_"
-            else:
-                for k in range(len(al.seqs)):
-                    print('k - ' + str(k))
-                    res[k] += al[k, orig]
-                orig += 1
-        res[len(al.seqs)] = new_al.seqs[1]
+        return self._normalize(al, new_al)
 
-        return(AlignmentWrapper(res))
-
-    def align_consensus(self):
+    def align(self):
         [seq1, seq2] = self.seqs[0:2]
-        al = self.alignment.run_global_align_multiple_solutions(seq1, seq2, g=self.g, debug=True)[0]
+        al = self.alignment.run_global_align_multiple_solutions(seq1, seq2, g=self.g)[0]
 
         al = AlignmentWrapper(al)
 
@@ -48,13 +30,49 @@ class MultipleAlignment():
         for i in range(2, self.n_seqs()):
             res = self.add_seq(res, self.seqs[i])
 
-        return res
+        return (res.consensus(), res)
         
-    def ScoreColumn(self, charsCol):
-        pass
+    def score_column(self, col):
+        score = 0
+
+        filter(lambda x: x != '_', col)
+        pairs = list(combinations(col, 2))
+
+        for x,y in pairs:
+            score += self._score_pair(x,y)
+        return score
         
-    def scoreSP (self, alignment):
-        pass
+    def score_sp(self, alignment):
+        score = 0
+        for i in range(len(alignment)):
+            score += self.score_column(alignment.column(i))
+
+        return score
+
+    def _score_pair(self, c1, c2):
+        # source for definition - https://www.cs.princeton.edu/~mona/Lecture/msa1.pdf
+        if c1 == '_' and c2 == '_': return 0
+        elif c1 == '_' or c2 == '_': return self.g
+        else: return self.alignment.sm[c1+c2]
+
+    def _normalize(self, previous, new):
+        res = []; n_seqs = len(previous.seqs)
+        for _ in range(n_seqs+1): res.append('')
+
+        o = 0
+        for i in range(len(new)):
+            if new[0,i] == '_':
+                for k in range(n_seqs):
+                    res[k] += "_"
+            else:
+                for k in range(n_seqs):
+                    res[k] += previous[k, o]
+                o += 1
+
+        res[n_seqs] = new.seqs[1]
+        return AlignmentWrapper(res)
+
+
    
 class AlignmentWrapper():
 

@@ -13,3 +13,11 @@ class PipelineTests(unittest.TestCase):
         p = bs.pipeline('bioseq/res/source.fasta', w=10)
         r = p.run_blast()
         print(r)
+
+    def test_run_msa(self):
+        p = bs.pipeline('bioseq/res/source.fasta', w=10)
+        blast = p.run_blast()
+        msa = p.run_msa(blast)
+
+        for seq in msa.seqs:
+            print(seq)
