@@ -1,0 +1,10 @@
+graph Network {
+	0 -- 1 [constraint=false]
+	1 -- 2 [constraint=false]
+	1 -- 10 [constraint=false]
+	4 -- 5 [constraint=false]
+	6 -- 7 [constraint=false]
+	6 -- 8 [constraint=false]
+	6 -- 9 [constraint=false]
+	7 -- 9 [constraint=false]
+}
