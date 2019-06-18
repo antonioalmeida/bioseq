@@ -33,6 +33,7 @@ class Pipeline():
         self.tree = bioseq.upgma(seqs).execute()
         print('> UPGMA execution finished.')
         self.tree.phylo_tree()
+        self.tree.print_tree()
 
 
 

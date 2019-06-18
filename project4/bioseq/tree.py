@@ -19,19 +19,20 @@ class Tree:
         return res
 
     def print_tree(self):
-        self.print_tree_rec(0, "Root")
+        print("> Root")
+        self._print(0, "    ")
     
-    def print_tree_rec (self, level, side):
+    def _print(self, level, side):
         tabs = ""
         for i in range(level): tabs += "\t"
         if self.value:
-            print(tabs, side, " - value:", self.value)
+            print(tabs, side, "> Leaf(value=" + str(self.value) + ")")
         else:
-            print(tabs, side, "- Dist.: ", self.distance)
-            if (self.left != None): 
-                self.left.print_tree_rec(level+1, "Left")
-            if (self.right != None): 
-                self.right.print_tree_rec(level+1, "Right")
+            print(tabs, side, "> Node(length={%.4f})" % self.distance)
+            if self.left: 
+                self.left._print(level+1, "    ")
+            if self.right: 
+                self.right._print(level+1, "    ")
 
     def size(self):
         ''' size of the tree: returns two values
