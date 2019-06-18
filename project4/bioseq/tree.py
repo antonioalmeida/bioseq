@@ -1,14 +1,15 @@
 class Tree:
 
-    def __init__(self, val=0, dist = 0, left = None, right = None):
+    def __init__(self, val=None, dist = 0, left = None, right = None, species='mekie'):
         self.value = val
         self.distance = dist
         self.left = left
         self.right = right
+        self.species = species
 
     def get_cluster(self):
         res = []
-        if self.value != -1:
+        if self.value:
             res.append(self.value)
         else:
             if self.left:
@@ -23,7 +24,7 @@ class Tree:
     def print_tree_rec (self, level, side):
         tabs = ""
         for i in range(level): tabs += "\t"
-        if self.value != -1:
+        if self.value:
             print(tabs, side, " - value:", self.value)
         else:
             print(tabs, side, "- Dist.: ", self.distance)
@@ -38,7 +39,7 @@ class Tree:
         - number of leaves'''
         numleaves = 0
         numnodes = 0
-        if self.value != -1:
+        if self.value:
             numleaves = 1
         else: 
             if (self.left != None):
@@ -52,7 +53,7 @@ class Tree:
         return numnodes, numleaves
 
     def exists_leaf(self, leafnum):
-        if self.value >= 0:
+        if self.value:
             return self.value == leafnum
         else:
             if self.left:
@@ -78,6 +79,45 @@ class Tree:
     def distance_leaves(self, l1, l2):
         ca = self.common_ancestor(l1,l2)
         return ca.distance*2
+
+    def print_tree_2(self, childattr='children', nameattr='name', indent='', last='updown'):
+
+        name = str(self.value) if self.value else int(self.distance)*'--'
+
+        children = lambda node: [node.left, node.right] if node.left != None else []
+        nb_children = lambda node: sum(nb_children(child) for child in children(node)) + 1
+        size_branch = {child: nb_children(child) for child in children(self)}
+
+        """ Creation of balanced lists for "up" branch and "down" branch. """
+        up = sorted(children(self), key=lambda node: nb_children(node))
+        down = []
+        while up and sum(size_branch[node] for node in down) < sum(size_branch[node] for node in up):
+            down.append(up.pop())
+
+        """ Printing of "up" branch. """
+        for child in up:     
+            next_last = 'up' if up.index(child) is 0 else ''
+            next_indent = '{0}{1}{2}'.format(indent, ' ' if 'up' in last else '│', ' ' * len(name))
+            child.print_tree_2(childattr, nameattr, next_indent, next_last)
+
+        """ Printing of current node. """
+        if last == 'up': start_shape = '┌'
+        elif last == 'down': start_shape = '└'
+        elif last == 'updown': start_shape = ' '
+        else: start_shape = '├'
+
+        if up: end_shape = '┤'
+        elif down: end_shape = '┐'
+        else: end_shape = ''
+
+        print('{0}{1}{2}{3}'.format(indent, start_shape, name, end_shape))
+
+        """ Printing of "down" branch. """
+        for child in down:
+            next_last = 'down' if down.index(child) is len(down) - 1 else ''
+            next_indent = '{0}{1}{2}'.format(indent, ' ' if 'down' in last else '│', ' ' * len(name))
+            child.print_tree_2(childattr, nameattr, next_indent, next_last)
+            
 
 def test():              
     a = Tree(1)

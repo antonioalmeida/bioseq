@@ -18,5 +18,16 @@ class UPGMATests(unittest.TestCase):
         s4 = "G_CAT__CGATT"
         u = upgma([s1,s2,s3,s4])
         t = u.execute()
-        t.print_tree()
+        print(t)
+
+    def test_execute_2(self):
+        s1 = "AACAGATC_T__"
+        s2 = "A_GATATT_AG_"
+        s3 = "A_CATATC_AT_"
+        s4 = "G_CAT__CGATT"
+        u = upgma([s1,s2,s3,s4])
+        t = u.execute()
+        print(t)
+
+
 

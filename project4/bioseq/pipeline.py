@@ -1,6 +1,7 @@
 from bioseq.fasta import read_fasta_file
 import bioseq.blast
 import bioseq.msa
+import bioseq.upgma
 
 class Pipeline():
 
@@ -25,6 +26,13 @@ class Pipeline():
         score = msa.score_sp(alignment)
         alignment.pretty_print(score)
         return alignment
+
+    def run_upgma(self, seqs):
+        t = bioseq.upgma(seqs).execute()
+        #t.print_tree_2()
+        #//t.print_tree()
+        print(t)
+
 
 
 

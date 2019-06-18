@@ -70,7 +70,7 @@ class BioSeq(abc.ABC):
             return pickle.load(input)
 
     def __str__(self):
-        return self.seq + ' - ' + str(self.seq_type)
+        return self.species if self.species != '' else self.seq + ' - ' + str(self.seq_type)
 
     def __eq__(self, other):
         return self.seq == other.seq and self.seq_type == other.seq_type
