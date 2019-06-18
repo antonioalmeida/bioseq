@@ -80,7 +80,7 @@ class Tree:
         ca = self.common_ancestor(l1,l2)
         return ca.distance*2
 
-    def print_tree_2(self, childattr='children', nameattr='name', indent='', last='updown'):
+    def phylo_tree(self, childattr='children', nameattr='name', indent='', last='updown'):
 
         name = str(self.value) if self.value else int(self.distance)*'--'
 
@@ -98,7 +98,7 @@ class Tree:
         for child in up:     
             next_last = 'up' if up.index(child) is 0 else ''
             next_indent = '{0}{1}{2}'.format(indent, ' ' if 'up' in last else '│', ' ' * len(name))
-            child.print_tree_2(childattr, nameattr, next_indent, next_last)
+            child.phylo_tree(childattr, nameattr, next_indent, next_last)
 
         """ Printing of current node. """
         if last == 'up': start_shape = '┌'
@@ -116,28 +116,5 @@ class Tree:
         for child in down:
             next_last = 'down' if down.index(child) is len(down) - 1 else ''
             next_indent = '{0}{1}{2}'.format(indent, ' ' if 'down' in last else '│', ' ' * len(name))
-            child.print_tree_2(childattr, nameattr, next_indent, next_last)
-            
+            child.phylo_tree(childattr, nameattr, next_indent, next_last)
 
-def test():              
-    a = Tree(1)
-    b = Tree(2)
-    c = Tree(3)
-    d = Tree(4)
-    e = Tree(-1, 2.0, b, c)
-    f = Tree(-1, 1.5, d, a)
-    g = Tree(-1, 4.5, e, f)
-    g.print_tree()
-    print(g.get_cluster())
-
-    # testing exercise 3
-    print(g.size())
-    print(g.exists_leaf(1))
-    print(g.exists_leaf(5))
-    g.common_ancestor(1,4).print_tree()
-    g.common_ancestor(1,2).print_tree()
-    print(g.distance_leaves(1,4))
-    print(g.distance_leaves(1,2))
-
-if __name__ == '__main__':
-    test()
