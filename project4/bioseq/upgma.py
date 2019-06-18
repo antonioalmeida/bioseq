@@ -6,50 +6,29 @@ class UPGMA:
     def __init__(self, seqs, sm=False):
         self.seqs = seqs
         self.alignment = alignment(sm)
-        self.i = []
-        self.distances = self._calculate_distances()
-
-        self.labels = [str(i) for i,_ in enumerate(seqs)]
-        #self.trees = [Tree(seq) for seq in seqs]
-
+        self.clusters = [str(i) for i,_ in enumerate(seqs)]
         self.trees = {str(i):Tree(seq) for i,seq in enumerate(seqs)}
-
-        self.dist = self._calculate_distances_2()
+        self.dist = self._calculate_distances()
 
     def execute(self):
         t = None
 
-        print(self.dist)
         while(self.dist != [[]]):
-            #(i,j,d) = min(self.distances, key=lambda x:x[2])
-            #print('idj ' + str(i) +' - '+str(j)+' - '+str(d))
-
             i,j,d = UPGMA._min_distance(self.dist)
 
-            i_cluster = self.labels[i];
-            j_cluster = self.labels[j];
-            t1 = self.trees[i_cluster]; t2 = self.trees[j_cluster]
+            ic= self.clusters[i]; jc= self.clusters[j]
+            t1 = self.trees[ic]; t2 = self.trees[jc]
 
             t = Tree(dist=d/2, left=t1, right=t2)
-            #self._update_distances(i, j, t1.size()[1], t2.size()[1])
 
-            print('IDJ - ', i,j,d)
-            UPGMA._join_table(self.dist, i, j, t1.size()[1], t2.size()[1])
+            UPGMA._update_distances(self.dist, i, j, t1.size()[1], t2.size()[1])
 
-            new_cluster = UPGMA._join_labels(self.labels, i, j)
- 
-            #del self.trees[i]
-            #del self.trees[j]
+            nc = UPGMA._update_clusters(self.clusters, i, j)
+            self.trees[nc] = t          
 
-            self.trees[new_cluster] = t          
-            print(self.dist)
-
-        for t,y in self.trees.items():
-            y.print_tree_2()
-        
         return t
 
-    def _join_table(d, a, b, nA, nB):
+    def _update_distances(d, a, b, nA, nB):
             # Swap if the indices are not ordered
             if b < a:
                 a, b = b, a
@@ -58,8 +37,6 @@ class UPGMA:
             row = []
             for i in range(0, a):
                 dax = d[a][i]*nA; dbx = d[b][i]*nB; nAB = nA+nB
-
-                print('DAX - DBX ', (dax, dbx))
                 row.append((dax+dbx)/nAB)
             d[a] = row
             
@@ -67,16 +44,11 @@ class UPGMA:
             #   Note: Since the matrix is lower triangular, row b only contains values for indices < b
             for i in range(a+1, b):
                 dax = d[i][a]*nA; dbx = d[b][i]*nB; nAB = nA+nB
-                print('DAX - DBX ', (dax, dbx))
                 d[i][a] = (dax+dbx)/nAB
                 
             #   We get the rest of the values from row i
             for i in range(b+1, len(d)):
-                print('dia -',  d[i][a], nA)
                 dax = d[i][a]*nA; dbx = d[i][b]*nB; nAB = nA+nB
-                print('DAX - DBX ', (dax, dbx))
-                print('D')
-                print(nAB)
                 d[i][a] = (dax+dbx)/nAB
                 # Remove the (now redundant) second index column entry
                 del d[i][b]
@@ -84,7 +56,7 @@ class UPGMA:
             # Remove the (now redundant) second index row
             del d[b]
 
-    def _join_labels(labels, a, b):
+    def _update_clusters(labels, a, b):
         # Swap if the indices are not ordered
         if b < a:
             a, b = b, a
@@ -98,36 +70,7 @@ class UPGMA:
 
         return new_label
 
-
-    def _update_distances(self, i, j, nA, nB):
-        removed = list(filter(lambda x: x[0] == i or x[1] == i, self.distances))
-
-        dist = []
-        new_i = len(self.trees)-1
-        for ind,(x,y,d) in enumerate(removed):
-            if x == j:  
-                print('TEST')
-                dax = self._get_distance(i,y)
-                dbx = self._get_distance(j,y)
-
-                print('i,j - %i - %i', (i, j))
-                print('dax - %i - %i', (dax, dbx))
-                d = (nA*dax + nB*dbx)/(nA+nB) 
-                dist.append((new_i,y,d))
-            elif j == i:
-                dax = self._get_distance(i,x)
-                dbx = self._get_distance(j,x)
-
-                print('i,j - %i - %i', (i, j))
-                print('dax - %i - %i', (dax, dbx))
-                d = (nA*dax + nB*dbx)/(nA+nB) 
-                dist.append((x,new_i,d))
-            else:
-                dist.append((x,y,d))
-
-        self.distances = dist
-
-    def _calculate_distances_2(self):
+    def _calculate_distances(self):
         dist = []
         for j,s1 in enumerate(self.seqs):
             row = []
@@ -135,14 +78,6 @@ class UPGMA:
                 if i < j:
                     row.append(UPGMA._hamming_distance(s1,s2))
             dist.append(row)
-        return dist
-
-    def _calculate_distances(self):
-        dist = []
-        for i,s1 in enumerate(self.seqs):
-            for j,s2 in enumerate(self.seqs):
-                if i < j:
-                    dist.append((i,j,UPGMA._hamming_distance(s1,s2)))
         return dist
 
     def _hamming_distance(s1, s2):

@@ -9,6 +9,8 @@ class Pipeline():
     seq = ''
     w = 0
 
+    tree = None
+
     def __init__(self, query_filename, type='dna', db_filename='bioseq/res/seqdump.txt', w=3, seq_type='protein'):
         self.seq = read_fasta_file(query_filename, seq_type, use_dic=False)[0]
         self.db_filename = db_filename
@@ -20,7 +22,7 @@ class Pipeline():
         return r
 
     def run_msa(self, seqs, sm=False, g=-3):
-        msa = bioseq.msa(seqs, sm, g, species=True)
+        msa = bioseq.msa(seqs + [self.seq], sm, g, species=True)
         (consensus, alignment) = msa.align()
 
         score = msa.score_sp(alignment)
@@ -28,10 +30,10 @@ class Pipeline():
         return alignment
 
     def run_upgma(self, seqs):
-        t = bioseq.upgma(seqs).execute()
-        #t.print_tree_2()
-        #//t.print_tree()
-        print(t)
+        self.tree = bioseq.upgma(seqs).execute()
+        print('> UPGMA execution finished.')
+        self.tree.phylo_tree()
+
 
 
 
