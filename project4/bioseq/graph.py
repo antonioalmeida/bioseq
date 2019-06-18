@@ -1,6 +1,3 @@
-## Graph represented as adjacency list using a dictionary
-## keys are vertices
-## values of the dictionary represent the list of adjacent vertices of the key node
 
 class Graph:
     """
@@ -9,27 +6,29 @@ class Graph:
     Values of the dictionary represent the list of adjacent
     vertices of the correspondent key, i.e. edges.
     """
+    dic = {}
 
-    def __init__(self, g = {}):
+    def __init__(self, g=None, m=None, c=10):
         """Constructor - takes dictionary to fill the graph as input."""
-        self.graph = g    
+        if g:
+            self.dic = g 
+        elif m:
+            self._from_matrix(m, c)
+        else:
+            self.dic = {}
 
-    @staticmethod
-    def matrix(m, c=10):
+    def _from_matrix(self, m, c):
         """Creates a Graph instance from a matrix and a given cut value"""
-        g = Graph()
-
+        self.dic = {}
         for j,row in enumerate(m):
             for i,v in enumerate(row):
                 if v < c:
-                    g.add_edge(i, j) 
-
-        return g
+                    self.add_edge(i, j) 
 
     def print_graph(self):
         """Prints the content of the graph as adjacency list"""
-        for v in self.graph.keys():
-            print (v, " -> ", self.graph[v])
+        for v in self.dic.keys():
+            print (v, " -> ", self.dic[v])
 
     def export(self, path='out/network'):
         """Exports graphviz version of the graph"""
@@ -61,40 +60,40 @@ class Graph:
 
     def get_nodes(self):
         """Returns the graph's nodes (keys of dictionary)"""
-        return list(self.graph.keys())
+        return list(self.dic.keys())
 
     def get_edges(self): 
         """Returns edges in the graph as a list of tuples (origin, destination)"""
         res = []
-        for k, v in self.graph.items():
+        for k, v in self.dic.items():
             for dest in v:
                 res.append((k, dest))
         return res
       
     def size(self):
         """Returns size of the graph : number of nodes, number of edges"""
-        return len(self.graph.keys()), len(self.graph.items())
+        return len(self.dic.keys()), len(self.dic.items())
 
     def add_vertex(self, v):
         """Add a vertex to the graph; tests if vertex exists not adding if it does"""
-        if v not in self.graph:
-            self.graph[v] = []
+        if v not in self.dic:
+            self.dic[v] = []
 
     def add_edge(self, o, d):
         """Add edge to the graph; if vertices do not exist, they are added to the graph"""
         self.add_vertex(o); self.add_vertex(d) # does nothing if vertices exist
-        if d not in self.graph[o]:
-            self.graph[o].append(d)
+        if d not in self.dic[o]:
+            self.dic[o].append(d)
         
     def get_successors(self, v):
         """Returns a copy of the successors of node v"""
-        return list(self.graph[v])     
+        return list(self.dic[v])     
              
     def get_predecessors(self, v):
         """Returns the predecessors of node v"""
         res = []
-        for k in self.graph.keys(): 
-            if v in self.graph[k]: 
+        for k in self.dic.keys(): 
+            if v in self.dic[k]: 
                 res.append(k)
         return res
     
@@ -109,13 +108,13 @@ class Graph:
         
     def out_degree(self, v):
         """Returns the out degree of node v"""
-        if v in self.graph:
-            return len(self.graph[v])
+        if v in self.dic:
+            return len(self.dic[v])
 
     def in_degree(self, value):
         """Returns the out degree of node v"""
         count = 0
-        for k,v in self.graph.items():
+        for k,v in self.dic.items():
             if k is not value:
                if value in v:
                    count += 1
@@ -130,14 +129,14 @@ class Graph:
         assert deg_type in ["inout", "in", "out"], "Invalid degree type."
 
         degs = {}
-        for v in self.graph.keys():
+        for v in self.dic.keys():
             if deg_type == "out" or deg_type == "inout":
-                degs[v] = len(self.graph[v])
+                degs[v] = len(self.dic[v])
             else: degs[v] = 0
         if deg_type == "in" or deg_type == "inout":
-            for v in self.graph.keys():
-                for d in self.graph[v]:
-                    if deg_type == "in" or v not in self.graph[d]:
+            for v in self.dic.keys():
+                for d in self.dic[v]:
+                    if deg_type == "in" or v not in self.dic[d]:
                         degs[d] = degs[d] + 1
         return degs
     
@@ -153,7 +152,7 @@ class Graph:
     def mean_degree(self, deg_type="inout"):
         """Returns the average degree of all nodes: sum of all degrees divided by number of nodes"""
         d = self.all_degrees(deg_type)
-        n = len(self.graph.keys())
+        n = len(self.dic.keys())
         return sum(d.values()) / n
 
     def prob_degree(self, deg_type="inout"):

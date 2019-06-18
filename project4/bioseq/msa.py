@@ -5,7 +5,7 @@ from itertools import combinations
 
 class MultipleAlignment():
 
-    def __init__(self, seqs, sm=False, g=-1, species=False):
+    def __init__(self, seqs, sm=False, g=-3, species=False):
         self.seqs = seqs # list of BioSeq objects
         self.alignment = alignment(sm) # an Alignment instance
         self.g = g
@@ -84,8 +84,6 @@ class MultipleAlignment():
         res[n_seqs] = new.seqs[1]
         return AlignmentWrapper(res)
 
-
-   
 class AlignmentWrapper():
 
     def __init__(self, seqs, seq_type = "protein"):
@@ -139,8 +137,10 @@ class AlignmentWrapper():
         print('> Visualizing MSA')
 
         for seq in self.seqs:
-            seq.label = " - %s" % seq.species if seq.species else ''
-            print('> ' + seq.seq + seq.label)
+            if type(seq) is str:
+                print('> ' + seq)
+            else:
+                print('> ' + seq.seq + str(seq))
 
         print()
         print('    > Consensus')

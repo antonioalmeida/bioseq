@@ -17,10 +17,13 @@ class PipelineTests(unittest.TestCase):
         p.run_blast()
         p.run_msa()
         p.run_upgma()
+        n = p.run_network()
 
         p.visualize_msa()
         p.phylo()
         p.text()
+        
+        n.stats()
 
     # def test_run_msa(self):
     #     p = bs.pipeline('bioseq/res/source.fasta')

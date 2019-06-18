@@ -2,6 +2,7 @@ from bioseq.fasta import read_fasta_file
 import bioseq.blast
 import bioseq.msa
 import bioseq.upgma
+import bioseq.graph
 
 class Pipeline():
 
@@ -9,10 +10,11 @@ class Pipeline():
     seq = ''
     w = 0
 
-
     blast = None
     tree = None
-    msa = None; consensus = None
+    msa = None 
+    graph = None
+    distances = None
 
     def __init__(self, query_filename, type='dna', db_filename='bioseq/res/seqdump.txt', w=3, seq_type='protein'):
         self.seq = read_fasta_file(query_filename, seq_type, use_dic=False)[0]
@@ -21,6 +23,7 @@ class Pipeline():
 
     def run_blast(self):
         b = bioseq.blast(self.db_filename, self.w)
+        print('> Executing BLAST...')
         seqs, scores = b.best_n_alignments(self.seq)
         self.blast = seqs
         print('> BLAST execution finished.')
@@ -35,6 +38,7 @@ class Pipeline():
         if not seqs:
             seqs = self.blast
 
+        print('> Executing MSA...')
         msa = bioseq.msa(seqs + [self.seq], sm, g, species=True)
         (consensus, alignment) = msa.align()
         self.msa = alignment
@@ -49,9 +53,32 @@ class Pipeline():
         if not seqs:
             seqs = self.msa
 
-        self.tree = bioseq.upgma(seqs).execute()
+        up = bioseq.upgma(seqs)
+        self.distances = up.original_dist
+        self.tree = up.execute()
         print('> UPGMA execution finished.')
         print('     > You can now use <obj>.phylo() and <obj>.text() to visualize the tree.')
+
+    def run_network(self, cut=15):
+        if self.distances: 
+            self.network = bioseq.Graph(m=self.distances, c=cut)
+        else: 
+            print('> Execute <obj>.run_upgma() first.')
+            return None
+
+        print('> Network creation finished.')
+        print('     > You can now use <obj>.stats() and <obj>.render() to interact with the network.')
+        return self.network
+
+    def export_network(self, cut=15):
+        if self.distances: 
+            network = bioseq.Graph(m=self.distances, c=cut)
+            path='out/cut-%d' % cut
+            network.export(path)
+            print('> Graph exported to %s' % path)
+        else: 
+            print('> Execute <obj>.run_upgma() first.')
+            return None
 
     def visualize_msa(self):
         if self.msa: self.msa.print()

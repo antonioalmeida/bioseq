@@ -9,6 +9,7 @@ class UPGMA:
         self.clusters = [str(i) for i,_ in enumerate(seqs)]
         self.trees = {str(i):Tree(seq) for i,seq in enumerate(seqs)}
         self.dist = self._calculate_distances()
+        self.original_dist = list(self.dist)
 
     def execute(self):
         t = None
