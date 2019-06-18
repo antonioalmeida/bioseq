@@ -12,8 +12,10 @@ class MSATests(unittest.TestCase):
 
         sm = bs.alignment.create_substitution_matrix('ATCG', 1, -1)
         (consensus, wrapper) = bs.msa([s1, s2, s3], sm, g=-1).align()
-        print(consensus)
-        print(wrapper)
+        self.assertEqual(consensus, 'ATGACC')
+        self.assertEqual(wrapper.seqs[0], 'AT_AGC')
+        self.assertEqual(wrapper.seqs[1], 'A__ACC')
+        self.assertEqual(wrapper.seqs[2], 'ATGAC_')
 
     def test_score_column(self):
         (_, al) = self.msa.align()

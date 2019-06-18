@@ -118,7 +118,7 @@ class Blast:
                     species.append(self.db[k].species)
 
         scores = sorted(seqs, key=lambda s: s[3], reverse=True)[:n]
-        return [ self.db[i[4]] for i in scores]
+        return [ self.db[i[4]] for i in scores], [i[3] for i in scores]
 
 
 

@@ -135,13 +135,13 @@ class AlignmentWrapper():
 
         return res
 
-    def pretty_print(self, score):
-        print('> MSA')
+    def print(self):
+        print('> Visualizing MSA')
 
         for seq in self.seqs:
-            print('> ' + seq.seq + ' - ' + seq.species)
+            seq.label = " - %s" % seq.species if seq.species else ''
+            print('> ' + seq.seq + seq.label)
 
+        print()
         print('    > Consensus')
         print('    > ' + self.consensus())
-        print('    > Score')
-        print('    > ' + str(score))
