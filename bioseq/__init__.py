@@ -11,3 +11,4 @@ from bioseq.msa import MultipleAlignment as msa
 from bioseq.upgma import UPGMA as upgma
 from bioseq.tree import Tree 
 from bioseq.graph import Graph
+from bioseq.utils import *

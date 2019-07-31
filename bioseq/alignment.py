@@ -1,4 +1,4 @@
-import utils
+import bioseq.utils
 
 GAP = '_'
 TERMINATION = 0
