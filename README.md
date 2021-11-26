@@ -1,4 +1,4 @@
-# fcup-abi
+# bioseq
 [![CircleCI](https://circleci.com/gh/antonioalmeida/fcup-abi.svg?style=svg)](https://circleci.com/gh/antonioalmeida/fcup-abi)
 
 🍀 **bioseq** - a Python module to handle biological sequences and perform common Bioinformatics operations. Developed as part of 'Algorithms for Bioinformatics', a subject @FCUP.
